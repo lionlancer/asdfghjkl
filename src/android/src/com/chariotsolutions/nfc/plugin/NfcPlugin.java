@@ -3,6 +3,7 @@ package com.chariotsolutions.nfc.plugin;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -778,12 +779,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 	
 	private boolean AuthenticateTag(Tag tag){
-		nfca = NfcA.get(tag);
+		NfcA nfca = NfcA.get(tag);
 		nfca.connect();
 		byte[] response;
 		
 		//Read page 41 on NTAG213, will be different for other tags
-		response = mifare.transceive(new byte[] {
+		response = nfca.transceive(new byte[] {
 				(byte) 0x30, // READ
 				41           // page address
 		});
