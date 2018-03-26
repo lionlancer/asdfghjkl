@@ -777,7 +777,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         return techLists.toArray(new String[0][0]);
     }
 	
-	private boolean AuthenticateTag(tag){
+	private boolean AuthenticateTag(Tag tag){
 		nfca = NfcA.get(tag);
 		nfca.connect();
 		byte[] response;
