@@ -963,20 +963,30 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					
 					try {
-						response = nfca.transceive(new byte[] {
-								(byte) 0x30, // READ
-								41           // page address aaaa
-						});
+						try {
+							response = nfca.transceive(new byte[] {
+									(byte) 0x30, // READ
+									131           // page address Ntag215
+							});
+						}catch(Exception e){
+							Log.d(TAG, "Read Page Address Exception Error: " + e.getMessage());
+							//e.printStackTrace();
+						}
 						
 						// Authenticate with the tag first
 						// In case it's already been locked
 						// only if the Auth0 byte is not 0xFF,
 						// which is the default value meaning unprotected
 						if(response[3] != (byte)0xFF) {
-							response = nfca.transceive(new byte[]{
-									(byte) 0x1B, // PWD_AUTH
-									pwd[0], pwd[1], pwd[2], pwd[3]
-							});
+							try {
+								response = nfca.transceive(new byte[]{
+										(byte) 0x1B, // PWD_AUTH
+										pwd[0], pwd[1], pwd[2], pwd[3]
+								});
+							}catch(Exception e){
+								Log.d(TAG, "Authenticate PWD_AUTH Exception Error: " + e.getMessage());
+								//e.printStackTrace();
+							}
 							
 							// Check if PACK is matching expected PACK
 							// This is a (not that) secure method to check if tag is genuine
