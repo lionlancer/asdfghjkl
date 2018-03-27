@@ -968,7 +968,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				boolean proceed = false;
-				
+				String message = "Hello WOrld";
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
@@ -983,13 +983,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         if (isWritable) {
                             int maxSize = message.toByteArray().length;
                             if (ndef.getMaxSize() < maxSize) {
-                                callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
+                                Log.d(TAG, "Tag capacity is " + ndef.getMaxSize() +
                                         " bytes, message is " + maxSize + " bytes.");
                             }else{
 								proceed = true;
 							}
 						}else {
-                            callbackContext.error("Tag is read only");
+                            Log.d(TAG, "Tag is read only");
                         }
 					}else {
                         NdefFormatable formatable = NdefFormatable.get(tag);
@@ -999,7 +999,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             callbackContext.success();
                             formatable.close();
                         } else {
-                            callbackContext.error("Tag doesn't support NDEF");
+                            Log.d(TAG, "Tag doesn't support NDEF");
                         }
                     }
 					
@@ -1013,9 +1013,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						try{
 							nfca.connect();
 						} catch (TagLostException e) {
-							callbackContext.error("Connect TagLostException Error: " + e.getMessage());
+							Log.d(TAG, "Connect TagLostException Error: " + e.getMessage());
 						} catch (IOException e) {
-							callbackContext.error("Connect IOException Error: " + e.getMessage());
+							Log.d(TAG, "Connect IOException Error: " + e.getMessage());
 						}
 						
 						
@@ -1157,11 +1157,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.success();
 					
                 } catch (FormatException e) {
-                    callbackContext.error("FormatException Error: " + e.getMessage());
+                    Log.d(TAG, "FormatException Error: " + e.getMessage());
                 } catch (TagLostException e) {
-                    callbackContext.error("TagLostException Error: " + e.getMessage());
+                    Log.d(TAG, "TagLostException Error: " + e.getMessage());
                 } catch (IOException e) {
-                    callbackContext.error("IOException Error: " + e.getMessage());
+                    Log.d(TAG, "IOException Error: " + e.getMessage());
                 }
 				
 				
