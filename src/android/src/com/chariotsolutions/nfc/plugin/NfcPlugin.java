@@ -930,7 +930,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				//if(AuthenticateTag(tag)){
 				try{	
-					
+					/*
 					NfcA nfca = NfcA.get(tag);
 					nfca.connect();
 					byte[] response;
@@ -1027,30 +1027,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					
 					nfca.close(); 
+					*/
 					
-					if(isAuthOK){
-						if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-							Ndef ndef = Ndef.get(tag);
-							fireNdefEvent(NDEF_MIME, ndef, messages);
-
-						} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
-							for (String tagTech : tag.getTechList()) {
-								Log.d(TAG, tagTech);
-								if (tagTech.equals(NdefFormatable.class.getName())) {
-									fireNdefFormatableEvent(tag);
-								} else if (tagTech.equals(Ndef.class.getName())) { //
-									Ndef ndef = Ndef.get(tag);
-									fireNdefEvent(NDEF, ndef, messages);
-								}
-							}
-						}
-
-						if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-							fireTagEvent(tag);
-						}
-					}else{
-						return;
-					}
 
 				//}else{
 				//	return;
@@ -1070,6 +1048,30 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Auth Exception Error: " + e.getMessage());
 					//e.printStackTrace();
 					
+					return;
+				}
+				
+				if(isAuthOK){
+					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+						Ndef ndef = Ndef.get(tag);
+						fireNdefEvent(NDEF_MIME, ndef, messages);
+
+					} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
+						for (String tagTech : tag.getTechList()) {
+							Log.d(TAG, tagTech);
+							if (tagTech.equals(NdefFormatable.class.getName())) {
+								fireNdefFormatableEvent(tag);
+							} else if (tagTech.equals(Ndef.class.getName())) { //
+								Ndef ndef = Ndef.get(tag);
+								fireNdefEvent(NDEF, ndef, messages);
+							}
+						}
+					}
+
+					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+						fireTagEvent(tag);
+					}
+				}else{
 					return;
 				}
 				
