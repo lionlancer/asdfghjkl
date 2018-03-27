@@ -461,7 +461,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							nfca.close();
 							Log.d(TAG, "NFCA Closed");
 						} catch (IOException e) {
-							Log.d(TAG, "Error: " + e.getMessage());
+							Log.d(TAG, "IOException Error: " + e.getMessage());
 							e.printStackTrace();
 						}
 						//ndef.writeNdefMessage(message);
@@ -471,11 +471,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.success();
 					
                 } catch (FormatException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error("FormatException Error: " + e.getMessage());
                 } catch (TagLostException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error("TagLostException Error: " + e.getMessage());
                 } catch (IOException e) {
-                    callbackContext.error(e.getMessage());
+                    callbackContext.error("IOException Error: " + e.getMessage());
                 }
             }
         });
@@ -892,17 +892,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		
 		} catch (TagLostException e) {
-			Log.d(TAG, "Error: " + e.getMessage());
+			Log.d(TAG, "Auth TagLostException Error: " + e.getMessage());
 			
 			return false;
 			
 		}catch(IOException e){
-			Log.d(TAG, "Error: " + e.getMessage());
+			Log.d(TAG, "Auth IOException Error: " + e.getMessage());
 			
 			return false;
 			
 		}catch (Exception e) {
-			Log.d(TAG, "Error: " + e.getMessage());
+			Log.d(TAG, "Auth Exception Error: " + e.getMessage());
 			//e.printStackTrace();
 			
 			return false;
