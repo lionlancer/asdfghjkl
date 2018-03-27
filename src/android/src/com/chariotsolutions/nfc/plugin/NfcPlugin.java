@@ -1128,6 +1128,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				if(isAuthOK){
 					try{
 						// open access
+						nfca = NfcA.get(tag);
 						nfca.open(); 
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
@@ -1172,6 +1173,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					
 					try{
+						nfca = NfcA.get(tag);
 						// close access
 						nfca.open(); 
 						// Get Page 2Ah
