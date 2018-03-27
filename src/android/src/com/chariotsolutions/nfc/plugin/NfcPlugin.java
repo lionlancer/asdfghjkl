@@ -435,13 +435,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// set PACK:
 						nfca.transceive(new byte[] {
 								(byte)0xA2,
-								(byte)0x2C,
+								//(byte)0x2C,
+								(byte)0x86,
 								pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 						});
 						// set PWD:
 						nfca.transceive(new byte[] {
 								(byte)0xA2,
-								(byte)0x2B,
+								//(byte)0x2B,
+								(byte)0x85,
 								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
 						});
 						
@@ -1004,12 +1006,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						}catch(Exception e){
 							Log.d(TAG, "Read Page Address Exception Error: " + e.getMessage());
-							//e.printStackTrace();
+							e.printStackTrace();
 						}
 					//}catch(TagLostException e){
 					}catch(Exception e){
 						Log.d(TAG, "Auth Tranceive Exception Error: " + e.getMessage());
-						//e.printStackTrace();
+						e.printStackTrace();
 					}
 
 					//if (authError) {
