@@ -929,8 +929,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				boolean isAuthOK = false;
 				
 				//if(AuthenticateTag(tag)){
+				/*
 				try{	
-					/*
+					
 					NfcA nfca = NfcA.get(tag);
 					nfca.connect();
 					byte[] response;
@@ -1027,7 +1028,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					
 					nfca.close(); 
-					*/
+					
 					
 					Log.d(TAG, "Auth here....");
 
@@ -1051,8 +1052,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					return;
 				}
+				*/
 				
-				if(isAuthOK){
+				//if(isAuthOK){
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						Ndef ndef = Ndef.get(tag);
 						fireNdefEvent(NDEF_MIME, ndef, messages);
@@ -1072,9 +1074,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 						fireTagEvent(tag);
 					}
-				}else{
-					return;
-				}
+				//}else{
+				//	return;
+				//}
 				
 				setIntent(new Intent());
             }
