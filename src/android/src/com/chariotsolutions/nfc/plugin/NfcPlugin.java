@@ -322,7 +322,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             maxSize = message.toByteArray().length;
                             if (ndef.getMaxSize() < maxSize) {
                                 callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
-                                        " bytes, message is " + size + " bytes.");
+                                        " bytes, message is " + maxSize + " bytes.");
                             }else{
 								proceed = true;
 							}
