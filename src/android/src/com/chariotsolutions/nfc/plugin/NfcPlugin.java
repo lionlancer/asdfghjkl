@@ -79,7 +79,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	private byte[] pwd      = "l10n".getBytes();
 	private	byte[] pack     = "sR".getBytes();
 	
-	private String act = ''; 
+	private String act = ""; 
 	
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
