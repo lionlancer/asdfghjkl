@@ -1199,6 +1199,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						fireTagEvent(tag);
 					}
 					
+					/*
 					try{
 						nfca = NfcA.get(tag);
 						// close access
@@ -1228,6 +1229,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Close Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
+					*/
 					
 				//}else{
 					//dcdsdf
