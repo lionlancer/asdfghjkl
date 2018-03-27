@@ -959,10 +959,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					boolean authError = true;
 					
 					
-					// Authenticate with the tag first
-					// In case it's already been locked
-					
 					try {
+						response = nfca.transceive(new byte[] {
+								(byte) 0x30, // READ
+								41           // page address aaaa
+						});
+						
+						// Authenticate with the tag first
+						// In case it's already been locked
 						// only if the Auth0 byte is not 0xFF,
 						// which is the default value meaning unprotected
 						if(response[3] != (byte)0xFF) {
