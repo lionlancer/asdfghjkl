@@ -1029,7 +1029,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca.close(); 
 					*/
 					
-					Log.d(LOG, 'Auth here....');
+					Log.d(TAG, 'Auth here....');
 
 				//}else{
 				//	return;
