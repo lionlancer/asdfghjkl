@@ -378,7 +378,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							}
 						//}catch(TagLostException e){
 						}catch(Exception e){
-							Log.d(TAG, "Tranceive Exception Error: " e.getMessage());
+							Log.d(TAG, "Tranceive Exception Error: " + e.getMessage());
 							//e.printStackTrace();
 						}
 
