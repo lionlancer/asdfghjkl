@@ -65,7 +65,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String TAG = "NfcPlugin";
     private final List<IntentFilter> intentFilters = new ArrayList<IntentFilter>();
     private final ArrayList<String[]> techLists = new ArrayList<String[]>();
-
+	
     private NdefMessage p2pMessage = null;
     private PendingIntent pendingIntent = null;
 
@@ -79,9 +79,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	private byte[] pwd      = "l10n".getBytes();
 	private	byte[] pack     = "sR".getBytes();
 	
+	private String act = ''; 
+	
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
 
+		act = action;
         Log.d(TAG, "execute " + action);
 
         // showSettings can be called if NFC is disabled
@@ -1151,6 +1154,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							});
 						}
 						nfca.close(); 
+						
+						Log.d(TAG, "Opened Acess");
 					}catch(Exception e){
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
@@ -1197,13 +1202,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							});
 						}
 						nfca.close(); 
+						
+						Log.d(TAG, "closed Acess");
 					}catch(Exception e){
 						Log.d(TAG, "Close Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
 					
 				}else{
-					return;
+					//dcdsdf
+					//return;
 				}
 				
 				setIntent(new Intent());
