@@ -1129,7 +1129,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					try{
 						// open access
 						nfca = NfcA.get(tag);
-						nfca.open(); 
+						nfca.connect(); 
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
@@ -1175,7 +1175,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					try{
 						nfca = NfcA.get(tag);
 						// close access
-						nfca.open(); 
+						nfca.connect(); 
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
