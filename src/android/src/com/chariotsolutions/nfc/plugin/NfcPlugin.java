@@ -926,29 +926,150 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                 Parcelable[] messages = intent.getParcelableArrayExtra((NfcAdapter.EXTRA_NDEF_MESSAGES));
 				
-				if(AuthenticateTag(tag)){
+				boolean isAuthOK = false;
+				
+				//if(AuthenticateTag(tag)){
+				try{	
 					
-					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-						Ndef ndef = Ndef.get(tag);
-						fireNdefEvent(NDEF_MIME, ndef, messages);
-
-					} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
-						for (String tagTech : tag.getTechList()) {
-							Log.d(TAG, tagTech);
-							if (tagTech.equals(NdefFormatable.class.getName())) {
-								fireNdefFormatableEvent(tag);
-							} else if (tagTech.equals(Ndef.class.getName())) { //
-								Ndef ndef = Ndef.get(tag);
-								fireNdefEvent(NDEF, ndef, messages);
+					NfcA nfca = NfcA.get(tag);
+					nfca.connect();
+					byte[] response;
+					
+					//Read page 41 on NTAG213, will be different for other tags
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							41           // page address
+					});
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if(response[3] != (byte)0xFF) {
+				
+						response = nfca.transceive(new byte[]{
+								(byte) 0x1B, // PWD_AUTH
+								pwd[0], pwd[1], pwd[2], pwd[3]
+						});
+						
+						Log.d(TAG, "Read Response:");
+						//Log.d(TAG, response);
+						
+						// Check if PACK is matching expected PACK
+						// This is a (not that) secure method to check if tag is genuine
+						if ((response != null) && (response.length >= 2)) {
+							final byte[] packResponse = Arrays.copyOf(response, 2);
+							
+							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+								
+							}else{
+								Log.d(TAG, "Tag successfully authenticated!");
+								
+								isAuthOK = true;
 							}
 						}
+						
+					}else{
+						// Protect tag with your password in case
+						// it's not protected yet
+
+						// Get Page 2Ah
+						response = nfca.transceive(new byte[] {
+								(byte) 0x30, // READ
+								(byte) 0x2A  // page address
+						});
+						// configure tag as write-protected with unlimited authentication tries
+						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
+							boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+							int authlim = 0;                                    // 0 = unlimited tries
+							nfca.transceive(new byte[] {
+									(byte) 0xA2, // WRITE
+									(byte) 0x2A, // page address
+									(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
+									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
+							});
+						}
+						// Get page 29h
+						response = nfca.transceive(new byte[] {
+								(byte) 0x30, // READ
+								(byte) 0x29  // page address
+						});
+						
+						Log.d(TAG, "Response: ");
+						//Log.d(TAG, response);
+						
+						// Configure tag to protect entire storage (page 0 and above)
+						if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
+							int auth0 = 0;                                    // first page to be protected
+							nfca.transceive(new byte[] {
+									(byte) 0xA2, // WRITE
+									(byte) 0x29, // page address
+									response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
+									(byte) (auth0 & 0x0ff)
+							});
+						}
+
+						// Send PACK and PWD
+						// set PACK:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x2C,
+								pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+						});
+						// set PWD:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x2B,
+								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+						});
+						
+						isAuthOK = true;
+					}
+					
+					nfca.close(); 
+					
+					if(isAuthOK){
+						if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+							Ndef ndef = Ndef.get(tag);
+							fireNdefEvent(NDEF_MIME, ndef, messages);
+
+						} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
+							for (String tagTech : tag.getTechList()) {
+								Log.d(TAG, tagTech);
+								if (tagTech.equals(NdefFormatable.class.getName())) {
+									fireNdefFormatableEvent(tag);
+								} else if (tagTech.equals(Ndef.class.getName())) { //
+									Ndef ndef = Ndef.get(tag);
+									fireNdefEvent(NDEF, ndef, messages);
+								}
+							}
+						}
+
+						if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+							fireTagEvent(tag);
+						}
+					}else{
+						return;
 					}
 
-					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-						fireTagEvent(tag);
-					}
-
-				}else{
+				//}else{
+				//	return;
+				//}
+				
+				} catch (TagLostException e) {
+					Log.d(TAG, "Auth TagLostException Error: " + e.getMessage());
+					
+					return;
+					
+				}catch(IOException e){
+					Log.d(TAG, "Auth IOException Error: " + e.getMessage());
+					
+					return;
+					
+				}catch (Exception e) {
+					Log.d(TAG, "Auth Exception Error: " + e.getMessage());
+					//e.printStackTrace();
+					
 					return;
 				}
 				
