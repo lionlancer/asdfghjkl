@@ -358,6 +358,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						
 						byte[] response;
+						boolean authError = true;
 						
 						// Authenticate with the tag first
 						// In case it's already been locked
@@ -382,6 +383,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							//e.printStackTrace();
 						}
 
+						if (authError) {
+							try {
+								nfca.close();
+							} catch (Exception ignored) {}
+							nfca.connect();
+						}
+						
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
