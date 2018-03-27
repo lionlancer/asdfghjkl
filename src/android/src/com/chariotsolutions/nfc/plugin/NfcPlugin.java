@@ -346,9 +346,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
 						NfcA nfca = NfcA.get(tag);
-
-						nfca.connect();
-
+						
+						
+						try{
+							nfca.connect();
+						} catch (TagLostException e) {
+							callbackContext.error("Connect TagLostException Error: " + e.getMessage());
+						} catch (IOException e) {
+							callbackContext.error("Connect IOException Error: " + e.getMessage());
+						}
+						
+						
 						byte[] response;
 						
 						// Authenticate with the tag first
@@ -358,7 +366,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 									(byte) 0x1B, // PWD_AUTH
 									pwd[0], pwd[1], pwd[2], pwd[3]
 							});
-
+							
 							// Check if PACK is matching expected PACK
 							// This is a (not that) secure method to check if tag is genuine
 							if ((response != null) && (response.length >= 2)) {
@@ -370,7 +378,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							}
 						//}catch(TagLostException e){
 						}catch(Exception e){
-							Log.d(TAG, e.getMessage());
+							Log.d(TAG, "Tranceive Exception Error: " e.getMessage());
 							//e.printStackTrace();
 						}
 
