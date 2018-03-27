@@ -371,6 +371,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							// Check if PACK is matching expected PACK
 							// This is a (not that) secure method to check if tag is genuine
 							if ((response != null) && (response.length >= 2)) {
+								authError = false;
+								
 								byte[] packResponse = Arrays.copyOf(response, 2);
 								if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
 									Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
@@ -397,7 +399,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-							boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+							boolean prot = true;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
@@ -809,6 +811,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         return techLists.toArray(new String[0][0]);
     }
 	
+	/*
 	private boolean AuthenticateTag(Tag tag){
 		try {
 			NfcA nfca = NfcA.get(tag);
@@ -926,6 +929,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		return false;
 	}
+	*/
 	
     void parseMessage() {
         cordova.getThreadPool().execute(new Runnable() {
@@ -945,12 +949,43 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				boolean isAuthOK = false;
 				
 				//if(AuthenticateTag(tag)){
-				/*
+				
 				try{	
 					
 					NfcA nfca = NfcA.get(tag);
 					nfca.connect();
 					byte[] response;
+					boolean authError = true;
+					
+					try {
+						response = nfca.transceive(new byte[]{
+								(byte) 0x1B, // PWD_AUTH
+								pwd[0], pwd[1], pwd[2], pwd[3]
+						});
+
+						// Check if PACK is matching expected PACK
+						if ((response != null) && (response.length >= 2)) {
+							authError = false;
+							
+							byte[] packResponse = Arrays.copyOf(response, 2);
+							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+								//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+							}
+
+						}
+					} catch (IOException e) {
+						Log.d(TAG, "Auth IOException Error: " + e.getMessage());
+						//e.printStackTrace();
+					}
+
+					if (authError) {
+						try {
+							nfca.close();
+						} catch (Exception ignored) {}
+						nfca.connect();
+					}
+
 					
 					//Read page 41 on NTAG213, will be different for other tags
 					response = nfca.transceive(new byte[] {
@@ -1068,9 +1103,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					return;
 				}
-				*/
 				
-				//if(isAuthOK){
+				
+				if(isAuthOK){
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						Ndef ndef = Ndef.get(tag);
 						fireNdefEvent(NDEF_MIME, ndef, messages);
@@ -1090,9 +1125,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 						fireTagEvent(tag);
 					}
-				//}else{
-				//	return;
-				//}
+				}else{
+					return;
+				}
 				
 				setIntent(new Intent());
             }
