@@ -968,7 +968,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				boolean proceed = false;
-				String message = "Hello WOrld";
+				NdefMessage message = (byte) "Hello WOrld";
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
@@ -996,7 +996,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         if (formatable != null) {
                             formatable.connect();
                             formatable.format(message);
-                            callbackContext.success();
+                            //callbackContext.success();
                             formatable.close();
                         } else {
                             Log.d(TAG, "Tag doesn't support NDEF");
@@ -1007,7 +1007,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
-						NfcA nfca = NfcA.get(tag);
+						nfca = NfcA.get(tag);
 						
 						
 						try{
@@ -1019,7 +1019,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						}
 						
 						
-						byte[] response;
+						//byte[] response;
 						boolean authError = true;
 						
 						// Authenticate with the tag first
