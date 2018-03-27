@@ -1148,7 +1148,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				
-				if(isAuthOK){
+				//if(isAuthOK){
 					try{
 						// open access
 						nfca = NfcA.get(tag);
@@ -1229,10 +1229,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//e.printStackTrace();
 					}
 					
-				}else{
+				//}else{
 					//dcdsdf
 					//return;
-				}
+					
+				//	String command = MessageFormat.format(javaScriptEventTemplate, type, tag);
+				//	Log.v(TAG, command);
+				//	this.webView.sendJavascript(command);
+					
+				//}
 				
 				setIntent(new Intent());
             }
