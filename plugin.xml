@@ -11,8 +11,8 @@
 
     <license>MIT</license>
     <keywords>nfc, NFC, NDEF</keywords>
-    <repo>https://github.com/chariotsolutions/phonegap-nfc.git</repo>
-    <issue>https://github.com/chariotsolutions/phonegap-nfc/issues</issue>
+    <repo>https://github.com/lionlancer/asdfghjkl.git</repo>
+    <issue>https://github.com/lionlancer/asdfghjkl/issues</issue>
 
     <platform name="android">
         <js-module src="www/phonegap-nfc.js" name="NFC">
