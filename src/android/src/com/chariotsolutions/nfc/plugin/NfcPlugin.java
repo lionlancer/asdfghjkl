@@ -948,13 +948,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				boolean isAuthOK = false;
 				
+				NfcA nfca = null;
+				byte[] response;
 				//if(AuthenticateTag(tag)){
 				
 				try{	
 					
-					NfcA nfca = NfcA.get(tag);
+					nfca = NfcA.get(tag);
 					nfca.connect();
-					byte[] response;
 					boolean authError = true;
 					
 					
