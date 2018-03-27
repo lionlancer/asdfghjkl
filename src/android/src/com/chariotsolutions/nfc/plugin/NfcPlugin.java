@@ -398,7 +398,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
-								(byte) 0x2A  // page address
+								//(byte) 0x2A  // page address
+								(byte) 0x84  // page address
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
@@ -406,7 +407,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
-									(byte) 0x2A, // page address
+									//(byte) 0x2A, // page address
+									(byte) 0x84, // page address
 									(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
 									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
 							});
@@ -414,14 +416,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// Get page 29h
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
-								(byte) 0x29  // page address
+								//(byte) 0x29  // page address
+								(byte) 0x83  // page address
 						});
 						// Configure tag to protect entire storage (page 0 and above)
 						if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
 							int auth0 = 0;                                    // first page to be protected
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
-									(byte) 0x29, // page address
+									//(byte) 0x29, // page address
+									(byte) 0x83, // page address
 									response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
 									(byte) (auth0 & 0x0ff)
 							});
@@ -966,7 +970,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						try {
 							response = nfca.transceive(new byte[] {
 									(byte) 0x30, // READ
-									131           // page address Ntag215
+									(byte) 131   // page address Ntag215
 							});
 						}catch(Exception e){
 							Log.d(TAG, "Read Page Address Exception Error: " + e.getMessage());
@@ -1150,7 +1154,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
-								(byte) 0x2A  // page address
+								//(byte) 0x2A  // page address
+								(byte) 0x84  // page address
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
@@ -1158,7 +1163,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
-									(byte) 0x2A, // page address
+									//(byte) 0x2A, // page address
+									(byte) 0x84, // page address
 									(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
 									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
 							});
@@ -1198,7 +1204,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
-								(byte) 0x2A  // page address
+								//(byte) 0x2A  // page address
+								(byte) 0x84  // page address
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
@@ -1206,7 +1213,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
-									(byte) 0x2A, // page address
+									//(byte) 0x2A, // page address
+									(byte) 0x84, // page address
 									(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
 									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
 							});
