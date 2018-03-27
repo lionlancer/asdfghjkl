@@ -957,13 +957,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					byte[] response;
 					boolean authError = true;
 					
+					
+					// Authenticate with the tag first
+					// In case it's already been locked
 					try {
 						response = nfca.transceive(new byte[]{
 								(byte) 0x1B, // PWD_AUTH
 								pwd[0], pwd[1], pwd[2], pwd[3]
 						});
-
+						
 						// Check if PACK is matching expected PACK
+						// This is a (not that) secure method to check if tag is genuine
 						if ((response != null) && (response.length >= 2)) {
 							authError = false;
 							
@@ -972,10 +976,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
 								//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
 							}
-
 						}
-					} catch (IOException e) {
-						Log.d(TAG, "Auth IOException Error: " + e.getMessage());
+					//}catch(TagLostException e){
+					}catch(Exception e){
+						Log.d(TAG, "Auth Tranceive Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
 
@@ -985,7 +989,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						} catch (Exception ignored) {}
 						nfca.connect();
 					}
-
+					
 					
 					//Read page 41 on NTAG213, will be different for other tags
 					response = nfca.transceive(new byte[] {
@@ -1020,8 +1024,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								isAuthOK = true;
 							}
 						}
+					
+					}
+					/* do not protect. let it be.
+					else{
 						
-					}else{
+						
 						// Protect tag with your password in case
 						// it's not protected yet
 
@@ -1077,6 +1085,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						isAuthOK = true;
 					}
+					*/
 					
 					nfca.close(); 
 					
