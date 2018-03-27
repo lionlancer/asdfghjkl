@@ -968,7 +968,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				boolean proceed = false;
-				NdefMessage message = (byte) "Hello WOrld";
+				NdefMessage message = (byte) 123;
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
@@ -1154,7 +1154,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 					}
 					
-					callbackContext.success();
+					//callbackContext.success();
 					
                 } catch (FormatException e) {
                     Log.d(TAG, "FormatException Error: " + e.getMessage());
