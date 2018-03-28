@@ -452,7 +452,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						nfca.transceive(new byte[] {
 								(byte)0xA2, // WRITE
 								(byte)3,    // block address
-								(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00
+								//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
+								(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
 						});
 
 						// wrap into TLV structure
@@ -962,6 +963,61 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//if(AuthenticateTag(tag)){
 				
 				Ndef ndef = null;
+				
+				
+				////////////////////////////////
+				
+				NdefRecord[] records = {
+					new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
+				};
+				
+				NdefMessage message = new NdefMessage(records);
+				
+				
+				try {
+                    ndef = Ndef.get(tag);
+                    /*
+					if (ndef != null) {
+                        ndef.connect();
+
+                        if (ndef.isWritable()) {
+                            int size = message.toByteArray().length;
+                            if (ndef.getMaxSize() < size) {
+                                callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
+                                        " bytes, message is " + size + " bytes.");
+                            } else {
+                                ndef.writeNdefMessage(message);
+                                callbackContext.success();
+                            }
+                        } else {
+                            callbackContext.error("Tag is read only");
+                        }
+                        ndef.close();
+                    } else {
+						*/
+                        NdefFormatable formatable = NdefFormatable.get(tag);
+                        if (formatable != null) {
+                            formatable.connect();
+                            formatable.format(message);
+                            //callbackContext.success();
+							Log.d(TAG, "Format success!");
+                            formatable.close();
+                        } else {
+                            Log.d(TAG, "Tag doesn't support NDEF");
+                        }
+                    //}
+                } catch (FormatException e) {
+                    Log.d(TAG, "FORMATEXCEPTION: " + e.getMessage());
+                } catch (TagLostException e) {
+                    Log.d(TAG, "TAGLOSTEXCEPTION: " + e.getMessage());
+					//callbackContext.error(e.getMessage());
+                } catch (IOException e) {
+                    Log.d(TAG, "IOEXCEPTION: " + e.getMessage());
+					//callbackContext.error(e.getMessage());
+                }
+				
+				////////////////////////////////
+				
 				
 				
 				//////////////////////////////////////
