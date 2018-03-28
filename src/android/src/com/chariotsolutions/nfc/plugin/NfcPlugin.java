@@ -1174,15 +1174,30 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							
 							response = nfca.transceive(new byte[] {
 									(byte) 0x30,  // READ
-									(byte) 131  // page address Ntag215
-									//(byte) 0x83   // page address Ntag215
+									//(byte) 131  // page address Ntag215
+									(byte) 0x83   // page address Ntag215
 							});
 						
 						}catch(Exception e){
-							Log.d(TAG, "Read Page Address Exception Error: " + e.getMessage());
+							Log.d(TAG, "Read Page Address Ntag215 Exception Error: " + e.getMessage());
 							e.printStackTrace();
 						}
 						
+						if(response == null){
+							try {
+								
+								response = nfca.transceive(new byte[] {
+										(byte) 0x30,  // READ
+										41  // page address Ntag213
+										//(byte) 0x83   // page address Ntag213
+								});
+								
+								Log.d(TAG, "Read Page Address Ntag213 OK");
+							}catch(Exception e){
+								Log.d(TAG, "Read Page Address Ntag213 Exception Error: " + e.getMessage());
+								e.printStackTrace();
+							}
+						}
 						
 						// Authenticate with the tag first
 						// In case it's already been locked
