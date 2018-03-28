@@ -1173,9 +1173,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						try {
 							
 							response = nfca.transceive(new byte[] {
-									(byte) 0x30, // READ
-									//(byte) 131   // page address Ntag215
-									(byte) 0x83   // page address Ntag215
+									(byte) 0x30,  // READ
+									(byte) 131  // page address Ntag215
+									//(byte) 0x83   // page address Ntag215
 							});
 						
 						}catch(Exception e){
