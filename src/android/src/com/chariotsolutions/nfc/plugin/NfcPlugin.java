@@ -975,6 +975,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				NdefMessage message = new NdefMessage(records);
 				
+				Ndef ndef = null;
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
 					
@@ -1171,7 +1172,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				try{
 					ndef.close();
-					Log.d("NDEF closed");
+					Log.d(TAG, "NDEF closed");
 				}catch(Exception e){
 					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
 				}
