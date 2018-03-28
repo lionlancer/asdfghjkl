@@ -968,8 +968,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				boolean proceed = false;
-				//byte[] msg = 123;
-				NdefMessage message = NdefMessage(123);
+				
+				NdefRecord[] records = {
+					new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
+				};
+				
+				NdefMessage message = new NdefMessage(records);
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
