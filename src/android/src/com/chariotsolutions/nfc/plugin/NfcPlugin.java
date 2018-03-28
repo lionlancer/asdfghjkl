@@ -967,7 +967,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				
-				boolean proceed = false;
+				boolean proceed = true;
 				
 				NdefRecord[] records = {
 					new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
@@ -979,53 +979,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
 					
-					// use ndef to find out if card is writable or not
-					ndef = Ndef.get(tag);
-                    if (ndef != null) {
-                        ndef.connect();
-							
-						boolean isWritable = ndef.isWritable();	
-							
-                        if (isWritable) {
-                            int maxSize = message.toByteArray().length;
-                            if (ndef.getMaxSize() < maxSize) {
-                                Log.d(TAG, "Tag capacity is " + ndef.getMaxSize() +
-                                        " bytes, message is " + maxSize + " bytes.");
-                            }else{
-								proceed = true;
-							}
-						}else {
-                            Log.d(TAG, "Tag is read only");
-                        }
-					}else {
-						try{
-							NdefFormatable formatable = NdefFormatable.get(tag);
-							if (formatable != null) {
-								formatable.connect();
-								formatable.format(message);
-								//callbackContext.success();
-								Log.d(TAG, "Format complete");
-								formatable.close();
-							} else {
-								Log.d(TAG, "Tag doesn't support NDEF");
-							}
-						}catch(FormatException e){
-							Log.d(TAG, "FORMAT FormatException Error: " + e.getMessage());
-						}catch(IOException e){
-							Log.d(TAG, "FORMAT IOException Error: " + e.getMessage());
-						}catch(Exception e){
-							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
-						}
-						
-						proceed = true;
-                    }
-					
-					try{
-						ndef.close();
-						Log.d(TAG, "NDEF closed");
-					}catch(Exception e){
-						Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
-					}
 					
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
