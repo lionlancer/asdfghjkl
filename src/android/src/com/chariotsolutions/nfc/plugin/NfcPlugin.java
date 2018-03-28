@@ -942,7 +942,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	}
 	*/
 	
-	
+	/*
 	private NdefRecord createTextRecord (String message)
 	{
 		try
@@ -968,7 +968,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		}
 		return null;
 	}
-	
+	*/
 	
     void parseMessage() {
         cordova.getThreadPool().execute(new Runnable() {
