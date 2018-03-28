@@ -961,7 +961,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] response;
 				//if(AuthenticateTag(tag)){
 				
-				
+				Ndef ndef = null;
 				
 				//////////////////////////////////////
 				
@@ -975,12 +975,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				NdefMessage message = new NdefMessage(records);
 				
-				Ndef ndef = null;
+				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
 					
 					// use ndef to find out if card is writable or not
-					Ndef ndef = Ndef.get(tag);
+					ndef = Ndef.get(tag);
                     if (ndef != null) {
                         ndef.connect();
 							
@@ -1304,7 +1304,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-						Ndef ndef = Ndef.get(tag);
+						ndef = Ndef.get(tag);
 						fireNdefEvent(NDEF_MIME, ndef, messages);
 
 					} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
@@ -1313,7 +1313,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							if (tagTech.equals(NdefFormatable.class.getName())) {
 								fireNdefFormatableEvent(tag);
 							} else if (tagTech.equals(Ndef.class.getName())) { //
-								Ndef ndef = Ndef.get(tag);
+								ndef = Ndef.get(tag);
 								fireNdefEvent(NDEF, ndef, messages);
 							}
 						}
