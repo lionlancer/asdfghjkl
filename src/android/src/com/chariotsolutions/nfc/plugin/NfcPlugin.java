@@ -1009,8 +1009,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							} else {
 								Log.d(TAG, "Tag doesn't support NDEF");
 							}
+						}catch(FormatException e){
+							Log.d(TAG, "FORMAT FormatException Error: " + e.getMessage());
 						}catch(IOException e){
-							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
+							Log.d(TAG, "FORMAT IOException Error: " + e.getMessage());
 						}catch(Exception e){
 							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
 						}
@@ -1018,7 +1020,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						proceed = true;
                     }
 					
-					
+					try{
+						ndef.close();
+						Log.d(TAG, "NDEF closed");
+					}catch(Exception e){
+						Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
+					}
 					
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
@@ -1171,8 +1178,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					//callbackContext.success();
 					
-                } catch (FormatException e) {
-                    Log.d(TAG, "FormatException Error: " + e.getMessage());
+                //} catch (FormatException e) {
+                //    Log.d(TAG, "FormatException Error: " + e.getMessage());
                 } catch (TagLostException e) {
                     Log.d(TAG, "TagLostException Error: " + e.getMessage());
                 } catch (IOException e) {
