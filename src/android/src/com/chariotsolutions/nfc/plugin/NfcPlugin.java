@@ -963,8 +963,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Ndef ndef = null;
 				
-				//////////////////////////////////////
 				
+				//////////////////////////////////////
+				/*
 				
 				
 				boolean proceed = true;
@@ -1000,6 +1001,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// Authenticate with the tag first
 						// In case it's already been locked
 						try {
+							response = nfca.transceive(new byte[] {
+									(byte) 0x30, // READ
+									(byte) 131   // page address Ntag215
+							});
+							
 							response = nfca.transceive(new byte[]{
 									(byte) 0x1B, // PWD_AUTH
 									pwd[0], pwd[1], pwd[2], pwd[3]
@@ -1146,7 +1152,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
 				}
 				
-				
+				*/
 				////////////////////////////////////
 				
 				
