@@ -998,15 +998,24 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             Log.d(TAG, "Tag is read only");
                         }
 					}else {
-                        NdefFormatable formatable = NdefFormatable.get(tag);
-                        if (formatable != null) {
-                            formatable.connect();
-                            formatable.format(message);
-                            //callbackContext.success();
-                            formatable.close();
-                        } else {
-                            Log.d(TAG, "Tag doesn't support NDEF");
-                        }
+						try{
+							NdefFormatable formatable = NdefFormatable.get(tag);
+							if (formatable != null) {
+								formatable.connect();
+								formatable.format(message);
+								//callbackContext.success();
+								Log.d(TAG, "Format complete");
+								formatable.close();
+							} else {
+								Log.d(TAG, "Tag doesn't support NDEF");
+							}
+						}catch(IOException e){
+							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
+						}catch(Exception e){
+							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
+						}
+						
+						proceed = true;
                     }
 					
 					
@@ -1153,7 +1162,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							nfca.close();
 							Log.d(TAG, "NFCA Closed");
 						} catch (IOException e) {
-							Log.d(TAG, "IOException Error: " + e.getMessage());
+							Log.d(TAG, "NFCA IOException Error: " + e.getMessage());
 							e.printStackTrace();
 						}
 						//ndef.writeNdefMessage(message);
