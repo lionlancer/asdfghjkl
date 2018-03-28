@@ -1167,48 +1167,51 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca.connect();
 					boolean authError = true;
 					
+					response = null;
 					
 					try {
 						try {
+							
 							response = nfca.transceive(new byte[] {
 									(byte) 0x30, // READ
 									//(byte) 131   // page address Ntag215
 									(byte) 0x83   // page address Ntag215
 							});
 						
-						
-							// Authenticate with the tag first
-							// In case it's already been locked
-							// only if the Auth0 byte is not 0xFF,
-							// which is the default value meaning unprotected
-							if(response[3] != (byte)0xFF) {
-								try {
-									response = nfca.transceive(new byte[]{
-											(byte) 0x1B, // PWD_AUTH
-											pwd[0], pwd[1], pwd[2], pwd[3]
-									});
-								}catch(Exception e){
-									Log.d(TAG, "Authenticate PWD_AUTH Exception Error: " + e.getMessage());
-									//e.printStackTrace();
-								}
-								
-								// Check if PACK is matching expected PACK
-								// This is a (not that) secure method to check if tag is genuine
-								if ((response != null) && (response.length >= 2)) {
-									authError = false;
-									isAuthOK = true;
-									byte[] packResponse = Arrays.copyOf(response, 2);
-									if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-										Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-										//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
-									}
-								}
-							}
-						
 						}catch(Exception e){
 							Log.d(TAG, "Read Page Address Exception Error: " + e.getMessage());
 							e.printStackTrace();
 						}
+						
+						
+						// Authenticate with the tag first
+						// In case it's already been locked
+						// only if the Auth0 byte is not 0xFF,
+						// which is the default value meaning unprotected
+						if(response != null && response[3] != (byte)0xFF) {
+							try {
+								response = nfca.transceive(new byte[]{
+										(byte) 0x1B, // PWD_AUTH
+										pwd[0], pwd[1], pwd[2], pwd[3]
+								});
+							}catch(Exception e){
+								Log.d(TAG, "Authenticate PWD_AUTH Exception Error: " + e.getMessage());
+								//e.printStackTrace();
+							}
+							
+							// Check if PACK is matching expected PACK
+							// This is a (not that) secure method to check if tag is genuine
+							if ((response != null) && (response.length >= 2)) {
+								authError = false;
+								isAuthOK = true;
+								byte[] packResponse = Arrays.copyOf(response, 2);
+								if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+									Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+									//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+								}
+							}
+						}
+						
 					//}catch(TagLostException e){
 					}catch(Exception e){
 						Log.d(TAG, "Auth Tranceive Exception Error: " + e.getMessage());
