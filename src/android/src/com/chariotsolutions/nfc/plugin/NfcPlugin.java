@@ -1008,7 +1008,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         }
                     }
 					
-					ndef.close();
+					
 					
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
@@ -1169,9 +1169,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                     Log.d(TAG, "IOException Error: " + e.getMessage());
                 }
 				
-				
-				
-				
+				try{
+					ndef.close();
+					Log.d("NDEF closed");
+				}catch(Exception e){
+					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
+				}
 				
 				
 				////////////////////////////////////
