@@ -997,16 +997,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				///////////////////////////////////
 				
 				// FORMAT:::
-				nfcA = NfcA.get(tag);
-				if (nfcA != null) {
+				nfca = NfcA.get(tag);
+				if (nfca != null) {
 					try {
-						nfcA.connect();
-						nfcA.transceive(new byte[] {
+						nfca.connect();
+						nfca.transceive(new byte[] {
 							(byte)0xA2,  // WRITE
 							(byte)0x03,  // page = 3
 							(byte)0xE1, (byte)0x10, (byte)0x06, (byte)0x00  // capability container (mapping version 1.0, 48 bytes for data available, read/write allowed)
 						});
-						nfcA.transceive(new byte[] {
+						nfca.transceive(new byte[] {
 							(byte)0xA2,  // WRITE
 							(byte)0x04,  // page = 4
 							(byte)0x03, (byte)0x00, (byte)0xFE, (byte)0x00  // empty NDEF TLV, Terminator TLV
@@ -1015,7 +1015,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
 					} finally {
 						try {
-							nfcA.close();
+							nfca.close();
 						} catch (Exception e) {
 							Log.d(TAG, "NFCA not closed");
 							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
