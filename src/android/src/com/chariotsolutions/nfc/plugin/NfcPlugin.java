@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.nio.charset.Charset
 
 // using wildcard imports so we can support Cordova 3.x
 import org.apache.cordova.*; // Cordova 3.x
@@ -999,7 +1000,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//	new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
 				//};
 				
-				NdefMessage message =  createTextRecord("Hello world"); // new NdefMessage(records);
+				//NdefMessage message =  createTextRecord("Hello world"); // new NdefMessage(records);
+				
+				// Record with actual data we care about
+				NdefRecord relayRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
+														new String("application/reformat")
+														.getBytes(Charset.forName("UTF-8")),
+														null, "Hi".getBytes());
+
+				// Complete NDEF message with both records
+				NdefMessage message = new NdefMessage(new NdefRecord[] {relayRecord});
 				
 				
 				try {
