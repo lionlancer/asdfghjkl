@@ -941,6 +941,34 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	}
 	*/
 	
+	
+	private NdefRecord createTextRecord (String message)
+	{
+		try
+		{
+			byte[] language;
+			language = Locale.getDefault().getLanguage().getBytes("UTF-8");
+
+			final byte[] text = message.getBytes("UTF-8");
+			final int languageSize = language.length;
+			final int textLength = text.length;
+
+			final ByteArrayOutputStream payload = new ByteArrayOutputStream(1 + languageSize + textLength);
+
+			payload.write((byte) (languageSize & 0x1F));
+			payload.write(language, 0, languageSize);
+			payload.write(text, 0, textLength);
+
+			return new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload.toByteArray());
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			Log.e("createTextRecord", e.getMessage());
+		}
+		return null;
+	}
+	
+	
     void parseMessage() {
         cordova.getThreadPool().execute(new Runnable() {
             @Override
@@ -967,11 +995,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				////////////////////////////////
 				
-				NdefRecord[] records = {
-					new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
-				};
+				//NdefRecord[] records = {
+				//	new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
+				//};
 				
-				NdefMessage message = new NdefMessage(records);
+				NdefMessage message =  createTextRecord("Hello world"); // new NdefMessage(records);
 				
 				
 				try {
