@@ -1000,6 +1000,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				// Authenticate with the tag first
 				// In case it's already been locked
 				try {
+					nfca = NfcA.get(tag);
 					response = nfca.transceive(new byte[]{
 							(byte) 0x1B, // PWD_AUTH
 							pwd[0], pwd[1], pwd[2], pwd[3]
