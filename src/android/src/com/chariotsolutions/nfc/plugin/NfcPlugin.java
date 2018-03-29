@@ -1024,6 +1024,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						if(response.length <= 1){
 							Log.d(TAG, "RESPONSE LENGTH <= 1");
 						}
+						Log.d(TAG, "NOT AUTHENTICATEDDDDDD");
+						Log.d(TAG, "Response: " + response.toString());
 					}
 				//}catch(TagLostException e){
 				}catch(Exception e){
@@ -1031,6 +1033,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//e.printStackTrace();
 				}
 				
+				Log.d(TAG, "DONE AUTH CHECK");
 				
 				///////////////////////////////////
 				
