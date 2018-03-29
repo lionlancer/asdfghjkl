@@ -1008,7 +1008,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// Check if PACK is matching expected PACK
 					// This is a (not that) secure method to check if tag is genuine
 					if ((response != null) && (response.length >= 2)) {
-						authError = false;
+						//authError = false;
 						
 						byte[] packResponse = Arrays.copyOf(response, 2);
 						if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
