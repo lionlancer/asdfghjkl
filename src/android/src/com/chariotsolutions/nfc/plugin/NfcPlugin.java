@@ -404,7 +404,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-							boolean prot = true;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+							boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
@@ -992,6 +992,47 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//if(AuthenticateTag(tag)){
 				
 				Ndef ndef = null;
+				
+				///////////////////////////////////
+				
+				// AUTHENTICATE:::
+				
+				// Authenticate with the tag first
+				// In case it's already been locked
+				try {
+					response = nfca.transceive(new byte[]{
+							(byte) 0x1B, // PWD_AUTH
+							pwd[0], pwd[1], pwd[2], pwd[3]
+					});
+					
+					// Check if PACK is matching expected PACK
+					// This is a (not that) secure method to check if tag is genuine
+					if ((response != null) && (response.length >= 2)) {
+						authError = false;
+						
+						byte[] packResponse = Arrays.copyOf(response, 2);
+						if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+							Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+							//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+						}else{
+							Log.d(TAG, "Tag authenticated.");
+						}
+					}else{
+						if(response == null){
+							Log.d(TAG, "NULL RESPONSE");
+						}
+						if(response.length <= 1){
+							Log.d(TAG, "RESPONSE LENGTH <= 1");
+						}
+					}
+				//}catch(TagLostException e){
+				}catch(Exception e){
+					Log.d(TAG, "Tranceive Exception EError: " + e.getMessage());
+					//e.printStackTrace();
+				}
+				
+				
+				///////////////////////////////////
 				
 				
 				///////////////////////////////////
