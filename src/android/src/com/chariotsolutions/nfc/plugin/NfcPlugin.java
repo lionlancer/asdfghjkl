@@ -477,7 +477,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							System.arraycopy(tlvEncodedData, i, command, 2, 4);
 							try {
 								response = nfca.transceive(command);
-								Log.d(TAG, "Response got!:");
+								Log.d(TAG, "Response got!: " + Arrays.toString(response));
 								//Log.d(TAG, response);
 								
 							} catch (IOException e) {
@@ -993,6 +993,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Ndef ndef = null;
 				
+				/*
 				///////////////////////////////////
 				
 				// AUTHENTICATE:::
@@ -1070,7 +1071,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				///////////////////////////////////
-				
+				*/
 				
 				
 				
@@ -1438,6 +1439,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
+					/*
 					try{
 						// open access
 						nfca = NfcA.get(tag);
@@ -1467,6 +1469,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
+					*/
 					
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						ndef = Ndef.get(tag);
