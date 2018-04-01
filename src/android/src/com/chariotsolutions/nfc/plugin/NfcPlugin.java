@@ -993,7 +993,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Ndef ndef = null;
 				
-				/*
+				
 				///////////////////////////////////
 				
 				// AUTHENTICATE:::
@@ -1071,7 +1071,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				///////////////////////////////////
-				*/
+				
 				
 				
 				
