@@ -1426,13 +1426,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Auth here....");
 
 				
-				} catch (TagLostException e) {
-					Log.d(TAG, "Auth TagLostException Error: " + e.getMessage());
+				//} catch (TagLostException e) {
+				//	Log.d(TAG, "Auth TagLostException Error: " + e.getMessage());
 					
 					//return;
 					
-				}catch(IOException e){
-					Log.d(TAG, "Auth IOException Error: " + e.getMessage());
+				//}catch(IOException e){
+				//	Log.d(TAG, "Auth IOException Error: " + e.getMessage());
 					
 					//return;
 					
