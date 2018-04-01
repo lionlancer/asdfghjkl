@@ -404,7 +404,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						});
 						// configure tag as write-protected with unlimited authentication tries
 						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-							boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+							boolean prot = true;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
 							int authlim = 0;                                    // 0 = unlimited tries
 							nfca.transceive(new byte[] {
 									(byte) 0xA2, // WRITE
