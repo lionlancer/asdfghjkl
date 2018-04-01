@@ -1040,7 +1040,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				///////////////////////////////////
 				
-				
+				/*
 				///////////////////////////////////
 				
 				// FORMAT:::
@@ -1073,7 +1073,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				///////////////////////////////////
-				
+				*/
 				
 				
 				
@@ -1346,8 +1346,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				try{	
 					
-					nfca = NfcA.get(tag);
-					nfca.connect();
+					//nfca = NfcA.get(tag);
+					//nfca.connect();
 					boolean authError = true;
 					
 					response = null;
@@ -1360,7 +1360,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 									//(byte) 131  // page address Ntag215
 									(byte) 0x83   // page address Ntag215
 							});
-						
+							
+							Log.d(TAG, "Read Page Address Ntag215 OK: " + Arrays.toString(response));
+							
 						}catch(Exception e){
 							Log.d(TAG, "Read Page Address Ntag215 Exception Error: " + e.getMessage());
 							e.printStackTrace();
@@ -1382,6 +1384,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							}
 						}
 						
+						/*
 						// Authenticate with the tag first
 						// In case it's already been locked
 						// only if the Auth0 byte is not 0xFF,
@@ -1409,6 +1412,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								}
 							}
 						}
+						*/
 						
 					//}catch(TagLostException e){
 					}catch(Exception e){
@@ -1416,7 +1420,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						e.printStackTrace();
 					}
 					
-					nfca.close(); 
+					//nfca.close(); 
 					
 					
 					Log.d(TAG, "Auth here....");
@@ -1441,11 +1445,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
-					/*
+					
 					try{
 						// open access
-						nfca = NfcA.get(tag);
-						nfca.connect(); 
+						//nfca = NfcA.get(tag);
+						//nfca.connect(); 
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
@@ -1471,7 +1475,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
-					*/
+					
+					try{
+						nfca.close();
+					}catch(Exception e){
+						Log.d(TAG, "NFCA not closed.");
+					}
+					
 					
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						ndef = Ndef.get(tag);
@@ -1492,6 +1502,55 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 						fireTagEvent(tag);
 					}
+					
+					/*
+					///////////////////////////////////
+				
+					// AUTHENTICATE:::
+					
+					// Authenticate with the tag first
+					// In case it's already been locked
+					try {
+						nfca = NfcA.get(tag);
+						nfca.connect();
+						response = nfca.transceive(new byte[]{
+								(byte) 0x1B, // PWD_AUTH
+								pwd[0], pwd[1], pwd[2], pwd[3]
+						});
+						
+						// Check if PACK is matching expected PACK
+						// This is a (not that) secure method to check if tag is genuine
+						if ((response != null) && (response.length >= 2)) {
+							//authError = false;
+							
+							byte[] packResponse = Arrays.copyOf(response, 2);
+							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+								//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+							}else{
+								Log.d(TAG, "Tag authenticated.");
+							}
+						}else{
+							if(response == null){
+								Log.d(TAG, "NULL RESPONSE");
+							}
+							if(response.length <= 1){
+								Log.d(TAG, "RESPONSE LENGTH <= 1");
+							}
+							Log.d(TAG, "NOT AUTHENTICATEDDDDDD");
+							Log.d(TAG, "Response: " + response.toString());
+						}
+					//}catch(TagLostException e){
+					}catch(Exception e){
+						Log.d(TAG, "Tranceive Exception EError: " + e.getMessage());
+						//e.printStackTrace();
+					}
+					
+					Log.d(TAG, "DONE AUTH CHECK");
+					
+					///////////////////////////////////
+					*/
+					
 					
 					/*
 					try{
