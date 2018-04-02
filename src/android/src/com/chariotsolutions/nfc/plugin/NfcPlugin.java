@@ -1161,7 +1161,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
-                try {
+               // try {
 					
 					
 					if(proceed){
@@ -1324,11 +1324,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
                 //} catch (FormatException e) {
                 //    Log.d(TAG, "FormatException Error: " + e.getMessage());
-                } catch (TagLostException e) {
-                    Log.d(TAG, "TagLostException Error: " + e.getMessage());
-                } catch (IOException e) {
-                    Log.d(TAG, "IOException Error: " + e.getMessage());
-                }
+                //} catch (TagLostException e) {
+                //    Log.d(TAG, "TagLostException Error: " + e.getMessage());
+                //} catch (IOException e) {
+                //    Log.d(TAG, "IOException Error: " + e.getMessage());
+                //}
 				
 				try{
 					ndef.close();
