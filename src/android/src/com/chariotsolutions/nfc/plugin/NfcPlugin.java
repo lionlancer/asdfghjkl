@@ -1148,7 +1148,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//////////////////////////////////////
-				/*
+				
 				
 				
 				boolean proceed = true;
@@ -1166,18 +1166,18 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					if(proceed){
 						// Using NfcA instead of MifareUltralight should make no difference in this method
-						nfca = NfcA.get(tag);
+						//nfca = NfcA.get(tag);
 						
 						
-						try{
-							nfca.connect();
-						} catch (TagLostException e) {
-							Log.d(TAG, "Connect TagLostException Error: " + e.getMessage());
-						} catch (IOException e) {
-							Log.d(TAG, "Connect IOException Error: " + e.getMessage());
-						}
+						//try{
+						//	nfca.connect();
+						//} catch (TagLostException e) {
+						//	Log.d(TAG, "Connect TagLostException Error: " + e.getMessage());
+						//} catch (IOException e) {
+						//	Log.d(TAG, "Connect IOException Error: " + e.getMessage());
+						//}
 						
-						
+						/*
 						//byte[] response;
 						boolean authError = true;
 						
@@ -1217,7 +1217,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							} catch (Exception ignored) {}
 							nfca.connect();
 						}
+						*/
 						
+						/*
 						// Get Page 2Ah
 						response = nfca.transceive(new byte[] {
 								(byte) 0x30, // READ
@@ -1269,14 +1271,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								(byte)0x85,
 								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
 						});
-						
+						*/
 						byte[] ndefMessage = message.toByteArray();
 
-						nfca.transceive(new byte[] {
-								(byte)0xA2, // WRITE
-								(byte)3,    // block address
-								(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00
-						});
+						//nfca.transceive(new byte[] {
+						//		(byte)0xA2, // WRITE
+						//		(byte)3,    // block address
+						//		(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00
+						//});
 
 						// wrap into TLV structure
 						byte[] tlvEncodedData = null;
@@ -1335,7 +1337,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
 				}
 				
-				*/
+				
 				////////////////////////////////////
 				
 				
@@ -1445,7 +1447,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
-					
+					/*
 					try{
 						// open access
 						//nfca = NfcA.get(tag);
@@ -1482,7 +1484,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "NFCA not closed.");
 					}
 					
-					
+					// USE NDEF TO READ DATA
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						ndef = Ndef.get(tag);
 						fireNdefEvent(NDEF_MIME, ndef, messages);
@@ -1501,6 +1503,24 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
 					if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 						fireTagEvent(tag);
+					}
+					*/
+					
+					// USE NFCA TO READ DATA
+					try{
+						response = nfca.transceive(new byte[] {
+								(byte) 0x3A, // FAST_READ
+								(byte) 4  // page address
+								(byte) 81  // page address
+						});
+						
+						Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+						String str = new String(response, "UTF-8");
+						Log.d(TAG, "response to UTF-8 String: " + str);
+						
+						nfca.close();
+					}catch(Exception e){
+						Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 					}
 					
 					/*
