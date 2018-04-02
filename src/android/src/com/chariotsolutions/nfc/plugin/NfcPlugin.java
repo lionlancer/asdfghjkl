@@ -1308,7 +1308,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								//e.printStackTrace();
 							}
 						}
-						
+						/*
 						try {
 							nfca.close();
 							Log.d(TAG, "NFCA Closed");
@@ -1316,6 +1316,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							Log.d(TAG, "NFCA IOException Error: " + e.getMessage());
 							e.printStackTrace();
 						}
+						*/
 						//ndef.writeNdefMessage(message);
 						
 					}
@@ -1330,13 +1331,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 //    Log.d(TAG, "IOException Error: " + e.getMessage());
                 //}
 				
+				/*
 				try{
 					ndef.close();
 					Log.d(TAG, "NDEF closed");
 				}catch(Exception e){
 					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
 				}
-				
+				*/
 				
 				////////////////////////////////////
 				
