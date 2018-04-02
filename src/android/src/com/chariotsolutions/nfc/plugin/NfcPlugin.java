@@ -1512,7 +1512,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// USE NFCA TO READ DATA
 					try{
 						int start = 4;
-						int last = 512;
+						int last = 256;
 						response = nfca.transceive(new byte[] {
 								(byte) 0x3A, // FAST_READ
 								(byte) ((4 + start / 4) & 0x0FF),  // first page address
