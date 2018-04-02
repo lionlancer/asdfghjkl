@@ -114,7 +114,7 @@ public class Util {
         return translation;
     }
 
-    static NdefRecord2[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
+    static NdefRecord[] jsonToNdefRecords2(String ndefMessageAsJSON) throws JSONException {
         JSONArray jsonRecords = new JSONArray(ndefMessageAsJSON);
         NdefRecord[] records = new NdefRecord[jsonRecords.length()];
         for (int i = 0; i < jsonRecords.length(); i++) {
@@ -133,11 +133,12 @@ public class Util {
         NdefRecord[] records = new NdefRecord[jsonRecords.length()];
         for (int i = 0; i < jsonRecords.length(); i++) {
             JSONObject record = jsonRecords.getJSONObject(i);
-            byte tnf = (byte) record.getInt("tnf");
-            byte[] type = jsonToByteArray(record.getJSONArray("type"));
-            byte[] id = jsonToByteArray(record.getJSONArray("id"));
-            byte[] payload = jsonToByteArray(record.getJSONArray("payload"));
-            records[i] = new NdefRecord(tnf, type, id, payload);
+            byte[] name = jsonToByteArray(record.getJSONArray("name"));
+            byte[] age = jsonToByteArray(record.getJSONArray("age"));
+            byte[] gender = jsonToByteArray(record.getJSONArray("gender"));
+            byte[] email = jsonToByteArray(record.getJSONArray("email"));
+            byte[] address = jsonToByteArray(record.getJSONArray("address"));
+            records[i] = new NdefRecord(name, age, gender, email, address);
         }
         return records;
     }
