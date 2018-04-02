@@ -1150,7 +1150,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//////////////////////////////////////
 				
 				
-				
+				/*
 				boolean proceed = true;
 				
 				NdefRecord[] records = {
@@ -1272,6 +1272,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
 						});
 						*/
+						/*
 						byte[] ndefMessage = message.toByteArray();
 
 						//nfca.transceive(new byte[] {
@@ -1316,10 +1317,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							Log.d(TAG, "NFCA IOException Error: " + e.getMessage());
 							e.printStackTrace();
 						}
-						*/
+						*
 						//ndef.writeNdefMessage(message);
 						
-					}
+					}*/
 					
 					//callbackContext.success();
 					
@@ -1449,7 +1450,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
-					/*
+					
 					try{
 						// open access
 						//nfca = NfcA.get(tag);
@@ -1472,14 +1473,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
 							});
 						}
-						nfca.close(); 
+						//nfca.close(); 
 						
 						Log.d(TAG, "Opened Acess");
 					}catch(Exception e){
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
-					
+					/*
 					try{
 						nfca.close();
 					}catch(Exception e){
@@ -1510,7 +1511,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					// USE NFCA TO READ DATA
 					try{
-						int start = 4;
+						int start = 0;
 						int last = 81;
 						response = nfca.transceive(new byte[] {
 								(byte) 0x3A, // FAST_READ
