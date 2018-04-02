@@ -1076,279 +1076,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				*/
 				
 				
-				
-				
-				
-				
-				
-				/*
-				
-				////////////////////////////////
-				
-				//NdefRecord[] records = {
-				//	new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
-				//};
-				
-				//NdefMessage message =  createTextRecord("Hello world"); // new NdefMessage(records);
-				
-				// Record with actual data we care about
-				NdefRecord relayRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
-														new String("application/reformat")
-														.getBytes(Charset.forName("UTF-8")),
-														null, "Hi".getBytes());
-
-				// Complete NDEF message with both records
-				NdefMessage message = new NdefMessage(new NdefRecord[] {relayRecord});
-				
-				
-				try {
-                    ndef = Ndef.get(tag);
-                    /*
-					if (ndef != null) {
-                        ndef.connect();
-
-                        if (ndef.isWritable()) {
-                            int size = message.toByteArray().length;
-                            if (ndef.getMaxSize() < size) {
-                                callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
-                                        " bytes, message is " + size + " bytes.");
-                            } else {
-                                ndef.writeNdefMessage(message);
-                                callbackContext.success();
-                            }
-                        } else {
-                            callbackContext.error("Tag is read only");
-                        }
-                        ndef.close();
-                    } else {
-						*
-                        NdefFormatable formatable = NdefFormatable.get(tag);
-                        if (formatable != null) {
-                            formatable.connect();
-                            formatable.format(message);
-                            //callbackContext.success();
-							Log.d(TAG, "Format success!");
-                            formatable.close();
-                        } else {
-                            Log.d(TAG, "Tag doesn't support NDEF");
-                        }
-                    //}
-                } catch (FormatException e) {
-                    Log.d(TAG, "FORMATEXCEPTION: " + e.getMessage());
-                } catch (TagLostException e) {
-                    Log.d(TAG, "TAGLOSTEXCEPTION: " + e.getMessage());
-					//callbackContext.error(e.getMessage());
-                } catch (IOException e) {
-                    Log.d(TAG, "IOEXCEPTION: " + e.getMessage());
-					//callbackContext.error(e.getMessage());
-                }
-				
-				////////////////////////////////
-				*/
-				
-				
-				//////////////////////////////////////
-				
-				
-				/*
-				boolean proceed = true;
-				
-				NdefRecord[] records = {
-					new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
-				};
-				
-				NdefMessage message = new NdefMessage(records);
-				
-				
-				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
-               // try {
-					
-					
-					if(proceed){
-						// Using NfcA instead of MifareUltralight should make no difference in this method
-						//nfca = NfcA.get(tag);
-						
-						
-						//try{
-						//	nfca.connect();
-						//} catch (TagLostException e) {
-						//	Log.d(TAG, "Connect TagLostException Error: " + e.getMessage());
-						//} catch (IOException e) {
-						//	Log.d(TAG, "Connect IOException Error: " + e.getMessage());
-						//}
-						
-						/*
-						//byte[] response;
-						boolean authError = true;
-						
-						// Authenticate with the tag first
-						// In case it's already been locked
-						try {
-							response = nfca.transceive(new byte[] {
-									(byte) 0x30, // READ
-									(byte) 131   // page address Ntag215
-							});
-							
-							response = nfca.transceive(new byte[]{
-									(byte) 0x1B, // PWD_AUTH
-									pwd[0], pwd[1], pwd[2], pwd[3]
-							});
-							
-							// Check if PACK is matching expected PACK
-							// This is a (not that) secure method to check if tag is genuine
-							if ((response != null) && (response.length >= 2)) {
-								authError = false;
-								
-								byte[] packResponse = Arrays.copyOf(response, 2);
-								if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-									Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-									//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
-								}
-							}
-						//}catch(TagLostException e){
-						}catch(Exception e){
-							Log.d(TAG, "Tranceive Exception Error: " + e.getMessage());
-							//e.printStackTrace();
-						}
-
-						if (authError) {
-							try {
-								nfca.close();
-							} catch (Exception ignored) {}
-							nfca.connect();
-						}
-						*/
-						
-						/*
-						// Get Page 2Ah
-						response = nfca.transceive(new byte[] {
-								(byte) 0x30, // READ
-								//(byte) 0x2A  // page address
-								(byte) 0x84  // page address
-						});
-						// configure tag as write-protected with unlimited authentication tries
-						if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-							boolean prot = true;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-							int authlim = 0;                                    // 0 = unlimited tries
-							nfca.transceive(new byte[] {
-									(byte) 0xA2, // WRITE
-									//(byte) 0x2A, // page address
-									(byte) 0x84, // page address
-									(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-									0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
-							});
-						}
-						// Get page 29h
-						response = nfca.transceive(new byte[] {
-								(byte) 0x30, // READ
-								//(byte) 0x29  // page address
-								(byte) 0x83  // page address
-						});
-						// Configure tag to protect entire storage (page 0 and above)
-						if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
-							int auth0 = 0;                                    // first page to be protected
-							nfca.transceive(new byte[] {
-									(byte) 0xA2, // WRITE
-									//(byte) 0x29, // page address
-									(byte) 0x83, // page address
-									response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
-									(byte) (auth0 & 0x0ff)
-							});
-						}
-
-						// Send PACK and PWD
-						// set PACK:
-						nfca.transceive(new byte[] {
-								(byte)0xA2,
-								//(byte)0x2C,
-								(byte)0x86,
-								pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
-						});
-						// set PWD:
-						nfca.transceive(new byte[] {
-								(byte)0xA2,
-								//(byte)0x2B,
-								(byte)0x85,
-								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
-						});
-						*/
-						/*
-						byte[] ndefMessage = message.toByteArray();
-
-						//nfca.transceive(new byte[] {
-						//		(byte)0xA2, // WRITE
-						//		(byte)3,    // block address
-						//		(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00
-						//});
-
-						// wrap into TLV structure
-						byte[] tlvEncodedData = null;
-
-						tlvEncodedData = new byte[ndefMessage.length + 3];
-						tlvEncodedData[0] = (byte)0x03;  // NDEF TLV tag
-						tlvEncodedData[1] = (byte)(ndefMessage.length & 0x0FF);  // NDEF TLV length (1 byte)
-						System.arraycopy(ndefMessage, 0, tlvEncodedData, 2, ndefMessage.length);
-						tlvEncodedData[2 + ndefMessage.length] = (byte)0xFE;  // Terminator TLV tag
-
-						// fill up with zeros to block boundary:
-						tlvEncodedData = Arrays.copyOf(tlvEncodedData, (tlvEncodedData.length / 4 + 1) * 4);
-						for (int i = 0; i < tlvEncodedData.length; i += 4) {
-							byte[] command = new byte[] {
-									(byte)0xA2, // WRITE
-									(byte)((4 + i / 4) & 0x0FF), // block address
-									0, 0, 0, 0
-							};
-							System.arraycopy(tlvEncodedData, i, command, 2, 4);
-							try {
-								response = nfca.transceive(command);
-								Log.d(TAG, "Response got!:");
-								//Log.d(TAG, response);
-								
-							} catch (IOException e) {
-								Log.d(TAG, "Error:" + e.getMessage());
-								//e.printStackTrace();
-							}
-						}
-						/*
-						try {
-							nfca.close();
-							Log.d(TAG, "NFCA Closed");
-						} catch (IOException e) {
-							Log.d(TAG, "NFCA IOException Error: " + e.getMessage());
-							e.printStackTrace();
-						}
-						*
-						//ndef.writeNdefMessage(message);
-						
-					}*/
-					
-					//callbackContext.success();
-					
-                //} catch (FormatException e) {
-                //    Log.d(TAG, "FormatException Error: " + e.getMessage());
-                //} catch (TagLostException e) {
-                //    Log.d(TAG, "TagLostException Error: " + e.getMessage());
-                //} catch (IOException e) {
-                //    Log.d(TAG, "IOException Error: " + e.getMessage());
-                //}
-				
-				/*
-				try{
-					ndef.close();
-					Log.d(TAG, "NDEF closed");
-				}catch(Exception e){
-					Log.d(TAG, "NDEF EXCEPTION ERROR: " + e.getMessage());
-				}
-				*/
-				
-				////////////////////////////////////
-				
-				
-				
-				
-				
-				
-				
 				try{	
 					
 					//nfca = NfcA.get(tag);
@@ -1389,35 +1116,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							}
 						}
 						
-						/*
-						// Authenticate with the tag first
-						// In case it's already been locked
-						// only if the Auth0 byte is not 0xFF,
-						// which is the default value meaning unprotected
-						if(response != null && response[3] != (byte)0xFF) {
-							try {
-								response = nfca.transceive(new byte[]{
-										(byte) 0x1B, // PWD_AUTH
-										pwd[0], pwd[1], pwd[2], pwd[3]
-								});
-							}catch(Exception e){
-								Log.d(TAG, "Authenticate PWD_AUTH Exception Error: " + e.getMessage());
-								//e.printStackTrace();
-							}
-							
-							// Check if PACK is matching expected PACK
-							// This is a (not that) secure method to check if tag is genuine
-							if ((response != null) && (response.length >= 2)) {
-								authError = false;
-								isAuthOK = true;
-								byte[] packResponse = Arrays.copyOf(response, 2);
-								if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-									Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-									//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
-								}
-							}
-						}
-						*/
 						
 					//}catch(TagLostException e){
 					}catch(Exception e){
@@ -1450,7 +1148,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
-					
+					/*
 					try{
 						// open access
 						//nfca = NfcA.get(tag);
@@ -1480,6 +1178,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
+					*/
 					/*
 					try{
 						nfca.close();
@@ -1525,58 +1224,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						String str = new String(response, "UTF-8");
 						Log.d(TAG, "response to UTF-8 String: " + str);
 						
+						fireNfcAEvent('NfcA', str);
+						
 						nfca.close();
 					}catch(Exception e){
 						Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 					}
-					
-					/*
-					///////////////////////////////////
-				
-					// AUTHENTICATE:::
-					
-					// Authenticate with the tag first
-					// In case it's already been locked
-					try {
-						nfca = NfcA.get(tag);
-						nfca.connect();
-						response = nfca.transceive(new byte[]{
-								(byte) 0x1B, // PWD_AUTH
-								pwd[0], pwd[1], pwd[2], pwd[3]
-						});
-						
-						// Check if PACK is matching expected PACK
-						// This is a (not that) secure method to check if tag is genuine
-						if ((response != null) && (response.length >= 2)) {
-							//authError = false;
-							
-							byte[] packResponse = Arrays.copyOf(response, 2);
-							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-								//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
-							}else{
-								Log.d(TAG, "Tag authenticated.");
-							}
-						}else{
-							if(response == null){
-								Log.d(TAG, "NULL RESPONSE");
-							}
-							if(response.length <= 1){
-								Log.d(TAG, "RESPONSE LENGTH <= 1");
-							}
-							Log.d(TAG, "NOT AUTHENTICATEDDDDDD");
-							Log.d(TAG, "Response: " + response.toString());
-						}
-					//}catch(TagLostException e){
-					}catch(Exception e){
-						Log.d(TAG, "Tranceive Exception EError: " + e.getMessage());
-						//e.printStackTrace();
-					}
-					
-					Log.d(TAG, "DONE AUTH CHECK");
-					
-					///////////////////////////////////
-					*/
 					
 					
 					/*
@@ -1626,6 +1279,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         });
     }
 
+	private void fireNfcAEvent(String type, String message){
+		//JSONObject jsonObject = buildNfcAJSON(nfca, messages);
+        //String tag = jsonObject.toString();
+
+        String command = MessageFormat.format(javaScriptEventTemplate, type, message);
+        Log.v(TAG, command);
+        this.webView.sendJavascript(command);
+	}
+	
     private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages) {
 
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
@@ -1679,7 +1341,38 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         }
         return json;
     }
+	
+	/*
+	JSONObject buildNfcAJSON(NfcA nfca, Parcelable[] messages) {
 
+        JSONObject json = Util.nfcaToJSON(nfca, messages);
+
+        // ndef is null for peer-to-peer
+        // ndef and messages are null for ndef format-able
+        if (ndef == null && messages != null) {
+
+            try {
+
+                if (messages.length > 0) {
+                    NdefMessage message = (NdefMessage) messages[0];
+                    json.put("ndefMessage", Util.messageToJSON(message));
+                    // guessing type, would prefer a more definitive way to determine type
+                    json.put("type", "NDEF Push Protocol");
+                }
+
+                if (messages.length > 1) {
+                    Log.wtf(TAG, "Expected one ndefMessage but found " + messages.length);
+                }
+
+            } catch (JSONException e) {
+                // shouldn't happen
+                Log.e(Util.TAG, "Failed to convert ndefMessage into json", e);
+            }
+        }
+        return json;
+    }
+	*/
+	
     private boolean recycledIntent() { // TODO this is a kludge, find real solution
 
         int flags = getIntent().getFlags();

@@ -4,6 +4,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.nfc.tech.NfcA;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +49,41 @@ public class Util {
         }
         return json;
     }
+	
+	/*
+	static JSONObject nfcaToJSON(NfcA nfca, NdefMessage ) {
+        JSONObject json = new JSONObject();
 
+        if (ndef != null) {
+            try {
+
+                Tag tag = nfca.getTag();
+                // tag is going to be null for NDEF_FORMATABLE until NfcUtil.parseMessage is refactored
+                if (tag != null) {
+                    json.put("id", byteArrayToJSON(tag.getId()));
+                    //json.put("techTypes", new JSONArray(Arrays.asList(tag.getTechList())));
+                }
+
+                //json.put("type", translateType(ndef.getType()));
+                //json.put("maxSize", ndef.getMaxSize());
+                //json.put("isWritable", ndef.isWritable());
+                json.put("ndefMessage", messageToJSON(ndef.getCachedNdefMessage()));
+                // Workaround for bug in ICS (Android 4.0 and 4.0.1) where
+                // mTag.getTagService(); of the Ndef object sometimes returns null
+                // see http://issues.mroland.at/index.php?do=details&task_id=47
+                try {
+                  json.put("canMakeReadOnly", ndef.canMakeReadOnly());
+                } catch (NullPointerException e) {
+                  json.put("canMakeReadOnly", JSONObject.NULL);
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "Failed to convert ndef into json: " + ndef.toString(), e);
+            }
+        }
+        return json;
+    }
+	*/
+	
     static JSONObject tagToJSON(Tag tag) {
         JSONObject json = new JSONObject();
 
@@ -79,7 +114,21 @@ public class Util {
         return translation;
     }
 
-    static NdefRecord[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
+    static NdefRecord2[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
+        JSONArray jsonRecords = new JSONArray(ndefMessageAsJSON);
+        NdefRecord[] records = new NdefRecord[jsonRecords.length()];
+        for (int i = 0; i < jsonRecords.length(); i++) {
+            JSONObject record = jsonRecords.getJSONObject(i);
+            byte tnf = (byte) record.getInt("tnf");
+            byte[] type = jsonToByteArray(record.getJSONArray("type"));
+            byte[] id = jsonToByteArray(record.getJSONArray("id"));
+            byte[] payload = jsonToByteArray(record.getJSONArray("payload"));
+            records[i] = new NdefRecord(tnf, type, id, payload);
+        }
+        return records;
+    }
+	
+	static NdefRecord[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
         JSONArray jsonRecords = new JSONArray(ndefMessageAsJSON);
         NdefRecord[] records = new NdefRecord[jsonRecords.length()];
         for (int i = 0; i < jsonRecords.length(); i++) {
