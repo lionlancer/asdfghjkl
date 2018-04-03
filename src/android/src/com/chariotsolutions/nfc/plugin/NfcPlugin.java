@@ -1040,7 +1040,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				///////////////////////////////////
 				
-				/*
+				
 				///////////////////////////////////
 				
 				// FORMAT:::
@@ -1063,17 +1063,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					} catch (Exception e) {
 						Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
 					} finally {
-						try {
-							nfca.close();
-						} catch (Exception e) {
-							Log.d(TAG, "NFCA not closed");
-							Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
-						}
+						//try {
+						//	nfca.close();
+						//} catch (Exception e) {
+						//	Log.d(TAG, "NFCA not closed");
+						//	Log.d(TAG, "FORMAT Exception Error: " + e.getMessage());
+						//}
 					}
 				}
 				
 				///////////////////////////////////
-				*/
+				
 				
 				
 				try{	
