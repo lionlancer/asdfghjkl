@@ -1094,6 +1094,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							});
 							
 							Log.d(TAG, "Read Page Address Ntag215 OK: " + Arrays.toString(response));
+							String str = new String(response, "UTF-8");
+							Log.d(TAG, "response to UTF-8 String: " + str);
 							
 						}catch(Exception e){
 							Log.d(TAG, "Read Page Address Ntag215 Exception Error: " + e.getMessage());
@@ -1224,7 +1226,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						String str = new String(response, "UTF-8");
 						Log.d(TAG, "response to UTF-8 String: " + str);
 						
-						fireNfcAEvent("NfcA", str);
+						//fireNfcAEvent("NfcA", str);
 						
 						nfca.close();
 					}catch(Exception e){
