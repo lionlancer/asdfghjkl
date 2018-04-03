@@ -1210,6 +1210,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					*/
 					
+					try{
+						int max = nfca.getMaxTransceiveLength();
+						Log.d(TAG, "Max Transceive Length: " + max);
+					}catch(Exception e){
+						Log.d(TAG, "Max Transceive Length Error: " + e.getMessage());
+					}
+					
+					
+					
 					// USE NFCA TO READ DATA
 					try{
 						int start = 4;
