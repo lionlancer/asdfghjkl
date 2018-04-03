@@ -114,7 +114,7 @@ public class Util {
         return translation;
     }
 
-    static NdefRecord[] jsonToNdefRecords2(String ndefMessageAsJSON) throws JSONException {
+    static NdefRecord[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
         JSONArray jsonRecords = new JSONArray(ndefMessageAsJSON);
         NdefRecord[] records = new NdefRecord[jsonRecords.length()];
         for (int i = 0; i < jsonRecords.length(); i++) {
@@ -127,7 +127,7 @@ public class Util {
         }
         return records;
     }
-	
+	/*
 	static NdefRecord[] jsonToNdefRecords(String ndefMessageAsJSON) throws JSONException {
         JSONArray jsonRecords = new JSONArray(ndefMessageAsJSON);
         NdefRecord[] records = new NdefRecord[jsonRecords.length()];
@@ -142,7 +142,7 @@ public class Util {
         }
         return records;
     }
-
+	*/
     static JSONArray byteArrayToJSON(byte[] bytes) {
         JSONArray json = new JSONArray();
         for (byte aByte : bytes) {
