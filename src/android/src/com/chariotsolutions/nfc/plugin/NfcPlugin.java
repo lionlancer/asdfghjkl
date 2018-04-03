@@ -1217,10 +1217,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						int last = 255;
 						response = nfca.transceive(new byte[] {
 								(byte) 0x3A, // FAST_READ
-								(byte) ((4 + start / 4) & 0x0FF),  // first page address
+								//(byte) ((4 + start / 4) & 0x0FF),  // first page address
 								//(byte) (4 & 0x0FF),  // first page address
-								(byte) ((4 + last / 4) & 0x0FF)  // last page address
+								(byte) 0x04,  // first page address
+								//(byte) ((4 + last / 4) & 0x0FF)  // last page address
 								//(byte) (81 & 0x0FF)  // last page address
+								(byte) 0x81  // last page address
 						});
 						
 						Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
