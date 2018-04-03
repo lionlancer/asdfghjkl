@@ -1150,7 +1150,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//if(isAuthOK){
-					/*
+					
 					try{
 						// open access
 						//nfca = NfcA.get(tag);
@@ -1180,7 +1180,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Open Acess Exception Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
-					*/
+					
 					/*
 					try{
 						nfca.close();
@@ -1223,7 +1223,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					try{
 						int start = 4;
 						//int last = 256;
-						int last = 255;
+						int last = 253;
 						response = nfca.transceive(new byte[] {
 								(byte) 0x3A, // FAST_READ
 								//(byte) ((4 + start / 4) & 0x0FF),  // first page address
