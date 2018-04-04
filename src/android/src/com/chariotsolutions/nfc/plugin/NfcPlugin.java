@@ -1760,6 +1760,41 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			nfca = NfcA.get(tag);
 			// close access
 			nfca.connect(); 
+			
+			try{
+				response = nfca.transceive(new byte[]{
+						(byte) 0x1B, // PWD_AUTH
+						pwd[0], pwd[1], pwd[2], pwd[3]
+				});
+				
+				// Check if PACK is matching expected PACK
+				// This is a (not that) secure method to check if tag is genuine
+				if ((response != null) && (response.length >= 2)) {
+					//authError = false;
+					
+					byte[] packResponse = Arrays.copyOf(response, 2);
+					if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+						Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+						//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+					}else{
+						Log.d(TAG, "Tag authenticated.");
+					}
+				}else{
+					if(response == null){
+						Log.d(TAG, "NULL RESPONSE");
+					}
+					if(response.length <= 1){
+						Log.d(TAG, "RESPONSE LENGTH <= 1");
+					}
+					Log.d(TAG, "NOT AUTHENTICATEDDDDDD");
+					Log.d(TAG, "Response: " + response.toString());
+				}
+			}catch(Exception e){
+				Log.d(TAG, "Close AUTH Error: " + e.getMessage());
+			}
+			
+			
+			
 			// Get Page 2Ah
 			response = nfca.transceive(new byte[] {
 					(byte) 0x30, // READ
