@@ -1917,7 +1917,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         super.onNewIntent(intent);
         setIntent(intent);
         savedIntent = intent;
-        parseMessage();
+        //parseMessage();
     }
 
     private Activity getActivity() {
