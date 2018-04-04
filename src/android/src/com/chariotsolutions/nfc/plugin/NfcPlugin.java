@@ -1736,6 +1736,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 
 	private void lockTag(NfcA nfca){
+		byte[] response;
+		
 		try{
 			//nfca = NfcA.get(tag);
 			// close access
