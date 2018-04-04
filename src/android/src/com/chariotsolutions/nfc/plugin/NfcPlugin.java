@@ -462,7 +462,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 	
 	
-	private void writeNdefMessage(String saveType, final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
+	private void writeNdefMessage(final String saveType, final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             
 			@Override
