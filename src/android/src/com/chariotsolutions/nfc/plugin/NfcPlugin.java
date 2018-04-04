@@ -1720,9 +1720,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		lockTag(nfca, tag);
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
-        String tag = jsonObject.toString();
+        String tag1 = jsonObject.toString();
 
-        String command = MessageFormat.format(javaScriptEventTemplate, type, tag);
+        String command = MessageFormat.format(javaScriptEventTemplate, type, tag1);
         Log.d(TAG, "Command: ");
 		Log.v(TAG, command);
         this.webView.sendJavascript(command);
