@@ -241,7 +241,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         NdefRecord[] records = {
             new NdefRecord(NdefRecord.TNF_EMPTY, new byte[0], new byte[0], new byte[0])
         };
-        writeNdefMessage(new NdefMessage(records), tag, callbackContext);
+        writeNdefMessage("Read-Only", new NdefMessage(records), tag, callbackContext);
     }
 
     private void writeTag(JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -425,7 +425,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                                 callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
                                         " bytes, message is " + size + " bytes.");
                             } else {
-                                ndef.writeNdefMessage(message);
+                                ndef.writeNdefMessage("Read-Only", message);
                                 callbackContext.success();
                             }
                         } else {
@@ -560,7 +560,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// Write with Ndef
 					try{
 						ndef.connect();
-						ndef.writeNdefMessage(message);
+						ndef.writeNdefMessage(saveType, message);
 						ndef.close();
 					}catch(Exception e){
 						Log.d(TAG, "NDEF Connection Error: " + e.getMessage());
