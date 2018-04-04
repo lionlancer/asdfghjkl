@@ -474,6 +474,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				boolean proceed = false;
 				
+				Log.d(TAG, "WRITING DATA...");
+				
 				
 				// Whole process is put into a big try-catch trying to catch the transceive's IOException	
                 try {
@@ -565,13 +567,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//}	
 					
 					// Write with Ndef
+					/*
 					try{
 						ndef.connect();
 						ndef.writeNdefMessage(message);
 						ndef.close();
+						
+						
 					}catch(Exception e){
 						Log.d(TAG, "NDEF Connection Error: " + e.getMessage());
 					}
+					*/
 					
 					try{
 						nfca.connect();
@@ -643,7 +649,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
 					});
 	
-					/*
+					
 					// wrap into TLV structure
 					byte[] tlvEncodedData = null;
 
@@ -672,7 +678,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							//e.printStackTrace();
 						}
 					}
-					*/
+					
 					
 					try {
 						nfca.close();
@@ -1374,6 +1380,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
+				Log.d(TAG, "READING....");
                 Log.d(TAG, "parseMessage " + getIntent());
                 Intent intent = getIntent();
                 String action = intent.getAction();
@@ -1591,7 +1598,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// USE NDEF TO READ DATA
 					if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 						ndef = Ndef.get(tag);
-						fireNdefEvent(NDEF_MIME, ndef, messages, nfca);
+						fireNdefEvent(NDEF_MIME, ndef, messages, nfca, tag);
 
 					} else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
 						for (String tagTech : tag.getTechList()) {
@@ -1600,7 +1607,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								fireNdefFormatableEvent(tag, nfca);
 							} else if (tagTech.equals(Ndef.class.getName())) { //
 								ndef = Ndef.get(tag);
-								fireNdefEvent(NDEF, ndef, messages, nfca);
+								fireNdefEvent(NDEF, ndef, messages, nfca, tag);
 							}
 						}
 					}
@@ -1693,53 +1700,64 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         });
     }
 
-	private void fireNfcAEvent(String type, String message, NfcA nfca){
+	/*
+	private void fireNfcAEvent(String type, String message, NfcA nfca, Tag tag){
 		//JSONObject jsonObject = buildNfcAJSON(nfca, messages);
         //String tag = jsonObject.toString();
 		
-		lockTag(nfca);
+		lockTag(nfca, tag);
 		
         String command = MessageFormat.format(javaScriptEventTemplate, type, message);
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
 	}
+	*/
 	
-    private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages, NfcA nfca) {
+    private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages, NfcA nfca, Tag tag) {
 		
-		lockTag(nfca);
+		Log.d(TAG, "fireNdefEvent called.");
+		
+		lockTag(nfca, tag);
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
         String tag = jsonObject.toString();
 
         String command = MessageFormat.format(javaScriptEventTemplate, type, tag);
-        Log.v(TAG, command);
+        Log.d(TAG, "Command: ");
+		Log.v(TAG, command);
         this.webView.sendJavascript(command);
 
     }
 
     private void fireNdefFormatableEvent (Tag tag, NfcA nfca) {
-
-		lockTag(nfca);
+		
+		Log.d(TAG, "fireNdefFormatableEvent called.");
+		
+		lockTag(nfca, tag);
 	
         String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
-        Log.v(TAG, command);
+        Log.d(TAG, "Command: ");
+		Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
 
     private void fireTagEvent (Tag tag, NfcA nfca) {
 		
-		lockTag(nfca);
+		Log.d(TAG, "fireTagEvent called.");
+		
+		lockTag(nfca, tag);
 	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
-        Log.v(TAG, command);
+        Log.d(TAG, "Command: ");
+		Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
 
-	private void lockTag(NfcA nfca){
+	private void lockTag(NfcA nfca, Tag tag){
 		byte[] response;
 		
 		try{
-			//nfca = NfcA.get(tag);
+			nfca = NfcA.get(tag);
 			// close access
 			nfca.connect(); 
 			// Get Page 2Ah
