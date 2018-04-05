@@ -557,7 +557,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	private NfcA authenticate(NfcA nfca){
 		
 		try {
-			response = nfca.transceive(new byte[]{
+			byte[] response = nfca.transceive(new byte[]{
 					(byte) 0x1B, // PWD_AUTH
 					pwd[0], pwd[1], pwd[2], pwd[3]
 			});
