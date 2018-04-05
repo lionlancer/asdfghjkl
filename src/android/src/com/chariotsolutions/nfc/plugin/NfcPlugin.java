@@ -823,7 +823,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca = NfcA.get(tag);
 					nfca.connect();
 					
-					byte[] response = null;
+					response = null;
 					
 					try{
 						// find out if tag is password protected
