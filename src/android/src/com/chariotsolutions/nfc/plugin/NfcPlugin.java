@@ -358,7 +358,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "writeNdefMessage Error: " + e.getMessage());
 				}
 				
-				TimeUnit.SECONDS.sleep(2);
+				try{
+					TimeUnit.SECONDS.sleep(2);
+				}catch(Exception e){
+					Log.d(TAG, "Sleep Error: " + e.getMessage());
+				}
 				
 				try{
 					nfca.connect();
