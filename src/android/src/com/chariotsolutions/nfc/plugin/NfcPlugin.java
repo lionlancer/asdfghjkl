@@ -89,7 +89,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
-
+		
+		act = action;
         Log.d(TAG, "execute " + action);
 
         // showSettings can be called if NFC is disabled
@@ -504,7 +505,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
 					//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
 				}else{
-					
+					Log.d(TAG, "Tag authenticated!");
 				}
 			}
 		}catch(Exception e){
@@ -540,6 +541,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						(byte) ((response[0] & 0x078) | (protect ? 0x080 : 0x000) | (authlim & 0x007)),    	// set ACCESS byte according to our settings
 						0, 0, 0                                                                         	// fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
 				});
+				
+				if(protect){
+					Log.d(TAG, "Tag enabled protection!");
+				}else {
+					Log.d(TAG, "Tag disabled protection!");
+				}
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Error in Get Page 2Ah: " + e.getMessage());
@@ -561,6 +568,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						(byte) (auth0 & 0x0ff)
 				});
 			}
+			
+			Log.d(TAG, "Configured Tag for protection!");
 		}catch(Exception e){
 			Log.d(TAG, "Error in Get Page 29h: " + e.getMessage());
 		}
@@ -930,6 +939,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// which is the default value meaning unprotected
 					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
 						
+						Log.d(TAG, "tag is protected!");
+						
 						isProtected = true;
 						gNfcA = nfca;
 						gTag = tag;
@@ -940,6 +951,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						
 					}else {
+						Log.d(TAG, "tag is NOT protected!");
 						//isAuthOK = true;
 						isProtected = false;
 					}
@@ -1013,7 +1025,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
     private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages) {
 
-		//if(isProtected) lockTag();
+		if(isProtected) lockTag();
 		
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
@@ -1027,7 +1039,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     private void fireNdefFormatableEvent (Tag tag) {
 		
-		//if(isProtected) lockTag();
+		if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
         Log.v(TAG, command);
@@ -1036,7 +1048,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     private void fireTagEvent (Tag tag) {
 
-		//if(isProtected) lockTag();
+		if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
         Log.v(TAG, command);
