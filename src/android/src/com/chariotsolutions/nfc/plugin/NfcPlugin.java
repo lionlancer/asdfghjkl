@@ -823,11 +823,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca = NfcA.get(tag);
 					nfca.connect();
 					
-					// find out if tag is password protected
-					response = nfca.transceive(new byte[] {
-						(byte) 0x30, // READ
-						(byte) 0x83  // page address
-					});
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x83  // page address
+						});
+					}catch(Exception e){
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+					}
 					
 					// Authenticate with the tag first
 					// only if the Auth0 byte is not 0xFF,
@@ -838,10 +842,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						response = nfca.transceive(new byte[]{
-								(byte) 0x1B, // PWD_AUTH
-								pwd[0], pwd[1], pwd[2], pwd[3]
-						});
+						try{
+							response = nfca.transceive(new byte[]{
+									(byte) 0x1B, // PWD_AUTH
+									pwd[0], pwd[1], pwd[2], pwd[3]
+							});
+						}catch(Exception e){
+							Log.d(TAG, "Authenticate with the tag Error: " + e.getMessage());
+						}
 						
 						Log.d(TAG, "Read Response:");
 						//Log.d(TAG, response);
@@ -859,22 +867,33 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								Log.d(TAG, "Tag successfully authenticated!");
 								
 								
-								// unlock read read protection
+								// unlock read protection
 								// Get Page 2Ah
-								response = nfca.transceive(new byte[] {
-										(byte) 0x30, // READ
-										(byte) 0x2A  // page address
-								});
+								try{
+									response = nfca.transceive(new byte[] {
+											(byte) 0x30, // READ
+											(byte) 0x2A  // page address
+									});
+								}catch(Exception e){
+									Log.d(TAG, "unlock read protection Error: " + e.getMessage());
+								}
+								
+								
 								// configure tag as write-protected with unlimited authentication tries
 								if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
 									boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
 									int authlim = 0;                                    // 0 = unlimited tries
-									nfca.transceive(new byte[] {
-											(byte) 0xA2, // WRITE
-											(byte) 0x2A, // page address
-											(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-											0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
-									});
+									
+									try{
+										nfca.transceive(new byte[] {
+												(byte) 0xA2, // WRITE
+												(byte) 0x2A, // page address
+												(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
+												0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
+										});
+									}catch(Exception e){
+										Log.d(TAG, "configure tag as write-protected Error: " + e.getMessage());
+									}
 								}
 								
 								//isAuthOK = true;
