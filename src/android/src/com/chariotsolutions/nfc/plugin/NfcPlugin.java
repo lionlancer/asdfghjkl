@@ -803,7 +803,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             public void run() {
                 Log.d(TAG, "READING....");
                 
-				/*
+				
 				Log.d(TAG, "parseMessage " + getIntent());
                 Intent intent = getIntent();
                 String action = intent.getAction();
@@ -943,8 +943,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 }
 
                 setIntent(new Intent());
-				*/
 				
+				/*
 				Log.d(TAG, "parseMessage " + getIntent());
                 Intent intent = getIntent();
                 String action = intent.getAction();
@@ -977,6 +977,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 }
 
                 setIntent(new Intent());
+				*/
             }
         });
     }
