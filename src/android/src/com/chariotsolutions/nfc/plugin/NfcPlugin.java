@@ -366,64 +366,77 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					authError = false;
 				}
 				
-				
-				// Get Page 2Ah
-				response = nfca.transceive(new byte[] {
-						(byte) 0x30, // READ
-						//(byte) 0x2A  // page address
-						(byte) 0x84  // page address
-				});
-				// configure tag as write-protected with unlimited authentication tries
-				if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-					boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-					//if(saveType == "Protected") prot = false;
-					prot = true;
-												
-					int authlim = 0;                                    // 0 = unlimited tries
-					nfca.transceive(new byte[] {
-							(byte) 0xA2, // WRITE
-							(byte) 0x84, // page address
-							(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-							0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
+				try{
+					// Get Page 2Ah
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x2A  // page address
+							(byte) 0x84  // page address
 					});
+					// configure tag as write-protected with unlimited authentication tries
+					if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
+						boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+						//if(saveType == "Protected") prot = false;
+						prot = true;
+													
+						int authlim = 0;                                    // 0 = unlimited tries
+						nfca.transceive(new byte[] {
+								(byte) 0xA2, // WRITE
+								(byte) 0x84, // page address
+								(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
+								0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
+						});
+					}
+				}catch(Exception e){
+					Log.d(TAG, "Error in Get Page 2Ah: " + e.getMessage());
 				}
-				// Get page 29h
-				response = nfca.transceive(new byte[] {
-						(byte) 0x30, // READ
-						(byte) 0x83  // page address
-				});
-				// Configure tag to protect entire storage (page 0 and above)
-				if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
-					int auth0 = 0;                                    // first page to be protected
-					nfca.transceive(new byte[] {
-							(byte) 0xA2, // WRITE
-							(byte) 0x83, // page address
-							response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
-							(byte) (auth0 & 0x0ff)
-					});
-				}
-
-				// Send PACK and PWD
-				// set PACK:
-				nfca.transceive(new byte[] {
-						(byte)0xA2,
-						(byte)0x86,
-						pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
-				});
-				// set PWD:
-				nfca.transceive(new byte[] {
-						(byte)0xA2,
-						(byte)0x85,
-						pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
-				});
 				
-				nfca.transceive(new byte[] {
-						(byte)0xA2, // WRITE
-						(byte)3,    // block address
-						//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
-						(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
-				});
-
+				try{
+					// Get page 29h
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x83  // page address
+					});
+					// Configure tag to protect entire storage (page 0 and above)
+					if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
+						int auth0 = 0;                                    // first page to be protected
+						nfca.transceive(new byte[] {
+								(byte) 0xA2, // WRITE
+								(byte) 0x83, // page address
+								response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
+								(byte) (auth0 & 0x0ff)
+						});
+					}
+				}catch(Exception e){
+					Log.d(TAG, "Error in Get Page 29h: " + e.getMessage());
+				}
+				
+				try{
+					// Send PACK and PWD
+					// set PACK:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x86,
+							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+					});
+					// set PWD:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x85,
+							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+					});
+					
+					nfca.transceive(new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)3,    // block address
+							//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
+							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
+					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+				}
+				
+				
 				byte[] ndefMessage = message.toByteArray();
 				
 				// wrap into TLV structure
