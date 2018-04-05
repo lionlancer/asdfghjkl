@@ -802,7 +802,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             @Override
             public void run() {
                 Log.d(TAG, "READING....");
-                Log.d(TAG, "parseMessage " + getIntent());
+                
+				/*
+				Log.d(TAG, "parseMessage " + getIntent());
                 Intent intent = getIntent();
                 String action = intent.getAction();
                 Log.d(TAG, "action " + action);
@@ -931,6 +933,40 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             fireNdefFormatableEvent(tag);
                         } else if (tagTech.equals(Ndef.class.getName())) { //
                             ndef = Ndef.get(tag);
+                            fireNdefEvent(NDEF, ndef, messages);
+                        }
+                    }
+                }
+
+                if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+                    fireTagEvent(tag);
+                }
+
+                setIntent(new Intent());
+				*/
+				
+				Log.d(TAG, "parseMessage " + getIntent());
+                Intent intent = getIntent();
+                String action = intent.getAction();
+                Log.d(TAG, "action " + action);
+                if (action == null) {
+                    return;
+                }
+
+                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                Parcelable[] messages = intent.getParcelableArrayExtra((NfcAdapter.EXTRA_NDEF_MESSAGES));
+
+                if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+                    Ndef ndef = Ndef.get(tag);
+                    fireNdefEvent(NDEF_MIME, ndef, messages);
+
+                } else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
+                    for (String tagTech : tag.getTechList()) {
+                        Log.d(TAG, tagTech);
+                        if (tagTech.equals(NdefFormatable.class.getName())) {
+                            fireNdefFormatableEvent(tag);
+                        } else if (tagTech.equals(Ndef.class.getName())) { //
+                            Ndef ndef = Ndef.get(tag);
                             fireNdefEvent(NDEF, ndef, messages);
                         }
                     }
