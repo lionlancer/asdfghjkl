@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.nio.charset.Charset;
 
 // using wildcard imports so we can support Cordova 3.x
@@ -340,67 +341,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				// open access
 				nfca = enableProtection(nfca, false);
 				
-				/*
-				//if not writable, unlock with password
-				if(!isWritable){
-					
-					// Authenticate with the tag
-					// In case it's already been locked
-					try {
-						response = nfca.transceive(new byte[]{
-								(byte) 0x1B, // PWD_AUTH
-								pwd[0], pwd[1], pwd[2], pwd[3]
-						});
-						
-						// Check if PACK is matching expected PACK
-						// This is a (not that) secure method to check if tag is genuine
-						if ((response != null) && (response.length >= 2)) {
-							//authError = false;
-							
-							byte[] packResponse = Arrays.copyOf(response, 2);
-							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-								//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
-							}else{
-								
-								// open access
-								try{
-									// Get Page 2Ah
-									response = nfca.transceive(new byte[] {
-											(byte) 0x30, // READ
-											//(byte) 0x2A  // page address
-											(byte) 0x84  // page address
-									});
-									// configure tag as write-protected with unlimited authentication tries
-									if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-										boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-										//if(saveType == "Protected") prot = false;
-										prot = true;
-																	
-										int authlim = 0;                                    // 0 = unlimited tries
-										nfca.transceive(new byte[] {
-												(byte) 0xA2, // WRITE
-												(byte) 0x84, // page address
-												(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-												0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
-										});
-									}
-								}catch(Exception e){
-									Log.d(TAG, "Error in Get Page 2Ah: " + e.getMessage());
-								}
-								
-							}
-						}
-					//}catch(TagLostException e){
-					}catch(Exception e){
-						Log.d(TAG, "Tranceive Exception Error: " + e.getMessage());
-						//e.printStackTrace();
-					}
-					
-				}else{
-					authError = false;
-				}
-				*/
+				
 				try{
 					nfca.close();
 				}catch(Exception e){
@@ -417,6 +358,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "writeNdefMessage Error: " + e.getMessage());
 				}
 				
+				TimeUnit.SECONDS.sleep(2);
 				
 				try{
 					nfca.connect();
@@ -432,53 +374,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				// close access
 				nfca = enableProtection(nfca, true);
 				
-				/*
-				try{
-					// Get Page 2Ah
-					response = nfca.transceive(new byte[] {
-							(byte) 0x30, // READ
-							//(byte) 0x2A  // page address
-							(byte) 0x84  // page address
-					});
-					// configure tag as write-protected with unlimited authentication tries
-					if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-						boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-						//if(saveType == "Protected") prot = false;
-						prot = true;
-													
-						int authlim = 0;                                    // 0 = unlimited tries
-						nfca.transceive(new byte[] {
-								(byte) 0xA2, // WRITE
-								(byte) 0x84, // page address
-								(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-								0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
-						});
-					}
-				}catch(Exception e){
-					Log.d(TAG, "Error in Get Page 2Ah: " + e.getMessage());
-				}
-				*/
-				/*
-				try{
-					// Get page 29h
-					response = nfca.transceive(new byte[] {
-							(byte) 0x30, // READ
-							(byte) 0x83  // page address
-					});
-					// Configure tag to protect entire storage (page 0 and above)
-					if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
-						int auth0 = 0;                                    // first page to be protected
-						nfca.transceive(new byte[] {
-								(byte) 0xA2, // WRITE
-								(byte) 0x83, // page address
-								response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
-								(byte) (auth0 & 0x0ff)
-						});
-					}
-				}catch(Exception e){
-					Log.d(TAG, "Error in Get Page 29h: " + e.getMessage());
-				}
-				*/
 				
 				try{
 					// Send PACK and PWD
@@ -1013,68 +908,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// open access
 						nfca = enableProtection(nfca, false);
 						
-						/*
-						try{
-							response = nfca.transceive(new byte[]{
-									(byte) 0x1B, // PWD_AUTH
-									pwd[0], pwd[1], pwd[2], pwd[3]
-							});
-						}catch(Exception e){
-							Log.d(TAG, "Authenticate with the tag Error: " + e.getMessage());
-						}
 						
-						Log.d(TAG, "Read Response:");
-						//Log.d(TAG, response);
-						
-						// Check if PACK is matching expected PACK
-						// This is a (not that) secure method to check if tag is genuine
-						if ((response != null) && (response.length >= 2)) {
-							final byte[] packResponse = Arrays.copyOf(response, 2);
-							
-							if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-								Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-								
-								//return false;
-							}else{
-								Log.d(TAG, "Tag successfully authenticated!");
-								
-								
-								// unlock read protection
-								// Get Page 2Ah
-								try{
-									response = nfca.transceive(new byte[] {
-											(byte) 0x30, // READ
-											(byte) 0x2A  // page address
-									});
-								}catch(Exception e){
-									Log.d(TAG, "unlock read protection Error: " + e.getMessage());
-								}
-								
-								
-								// configure tag as write-protected with unlimited authentication tries
-								if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
-									boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-									int authlim = 0;                                    // 0 = unlimited tries
-									
-									try{
-										nfca.transceive(new byte[] {
-												(byte) 0xA2, // WRITE
-												(byte) 0x2A, // page address
-												(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
-												0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
-										});
-										
-										Log.d(TAG, "Disabled read protection");
-									}catch(Exception e){
-										Log.d(TAG, "configure tag as write-protected Error: " + e.getMessage());
-									}
-								}
-								
-								//isAuthOK = true;
-								//return true;
-							}
-						}
-						*/
 					}else {
 						//isAuthOK = true;
 						isProtected = false;
