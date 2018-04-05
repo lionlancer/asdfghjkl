@@ -818,6 +818,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Ndef ndef = null;
 				
+				boolean readProtected = false;
 				
 				try{
 					nfca = NfcA.get(tag);
@@ -833,13 +834,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte) (131 & 0x0FF)  // page address
 						});
 					}catch(Exception e){
+						readProtected = true;
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
 					}
 					
 					// Authenticate with the tag first
 					// only if the Auth0 byte is not 0xFF,
 					// which is the default value meaning unprotected
-					if(response[3] != (byte)0xFF) {
+					if((response && response[3] != (byte)0xFF) || readProtected) {
 						
 						isProtected = true;
 						gNfcA = nfca;
