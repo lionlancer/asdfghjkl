@@ -284,7 +284,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             maxSize = message.toByteArray().length;
                             if (ndef.getMaxSize() < maxSize) {
                                 callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
-                                        " bytes, message is " + size + " bytes.");
+                                        " bytes, message is " + maxSize + " bytes.");
                             } else {
                                 //ndef.writeNdefMessage(message);
                                 //callbackContext.success();
@@ -296,6 +296,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							
                         }
                         
+						ndef.close();
+						
                     } else {
                         NdefFormatable formatable = NdefFormatable.get(tag);
                         if (formatable != null) {
@@ -307,7 +309,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                             callbackContext.error("Tag doesn't support NDEF");
                         }
                     }
-                
 				
 				} catch (FormatException e) {
                     callbackContext.error(e.getMessage());
@@ -318,7 +319,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                     callbackContext.error(e.getMessage());
                 }
 				
-				ndef.close();
+				
 				
 				byte[] response;
 				boolean authError = true;
@@ -375,7 +376,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				// configure tag as write-protected with unlimited authentication tries
 				if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
 					boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
-					if(saveType == "Protected") prot = false;
+					//if(saveType == "Protected") prot = false;
+					prot = true;
 												
 					int authlim = 0;                                    // 0 = unlimited tries
 					nfca.transceive(new byte[] {
@@ -803,10 +805,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Ndef ndef = null;
 				
-				boolean isAuthOK = false;
 				
 				try{
-					NfcA nfca = NfcA.get(tag);
+					nfca = NfcA.get(tag);
 					nfca.connect();
 					
 					// find out if tag is password protected
@@ -881,7 +882,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
                 if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-                    Ndef ndef = Ndef.get(tag);
+                    ndef = Ndef.get(tag);
                     fireNdefEvent(NDEF_MIME, ndef, messages);
 
                 } else if (action.equals(NfcAdapter.ACTION_TECH_DISCOVERED)) {
@@ -890,7 +891,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         if (tagTech.equals(NdefFormatable.class.getName())) {
                             fireNdefFormatableEvent(tag);
                         } else if (tagTech.equals(Ndef.class.getName())) { //
-                            Ndef ndef = Ndef.get(tag);
+                            ndef = Ndef.get(tag);
                             fireNdefEvent(NDEF, ndef, messages);
                         }
                     }
@@ -941,7 +942,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		byte[] response;
 		
 		try{
-			nfca = NfcA.get(gTag);
+			NfcA nfca = NfcA.get(gTag);
 			// close access
 			nfca.connect(); 
 			
