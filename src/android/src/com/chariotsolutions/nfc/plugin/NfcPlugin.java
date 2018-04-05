@@ -401,14 +401,20 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					authError = false;
 				}
 				*/
+				try{
+					nfca.close();
+				}catch(Exception e){
+					Log.d(TAG, "NFCA CLOSE Error: " + e.getMessage());
+				}
 				
-				nfca.close();
-				
-				
-				ndef.connect();
-				// write message via ndef
-				ndef.writeNdefMessage(message);
-				ndef.close();
+				try{
+					ndef.connect();
+					// write message via ndef
+					ndef.writeNdefMessage(message);
+					ndef.close();
+				}catch(Exception e){
+					Log.d(TAG, "writeNdefMessage Error: " + e.getMessage());
+				}
 				
 				
 				try{
