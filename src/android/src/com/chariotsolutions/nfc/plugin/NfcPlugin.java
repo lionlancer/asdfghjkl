@@ -364,7 +364,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Sleep Error: " + e.getMessage());
 				}
 				
-				try{
+				
+				try{	
 					nfca.connect();
 				} catch (TagLostException e) {
 					callbackContext.error("Connect TagLostException Error: " + e.getMessage());
@@ -372,12 +373,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.error("Connect IOException Error: " + e.getMessage());
 				}	
 				
+				Log.d(TAG, "Reconnected...");
+				
 				// re-auth
 				nfca = authenticate(nfca);
+				
+				Log.d(TAG, "Authenticated...");
 				
 				// close access
 				nfca = enableProtection(nfca, true);
 				
+				Log.d(TAG, "EnabledProtection");
 				
 				try{
 					// Send PACK and PWD
@@ -403,6 +409,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}catch(Exception e){
 					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
 				}
+				
+				Log.d(TAG, "Set PWD and PACK");
 				
 				try {
 					nfca.close();
