@@ -357,9 +357,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					// write message via ndef
 					try{
+						
 						ndef.writeNdefMessage(message);
 					}catch(Exception e){
 						Log.d(TAG, "Writing NDEF MEssage started Error: " + e.getMessage());
+						String msg = new String(message.getRecords()[0].getPayload());
+						Log.d(TAG, "Payload: " + msg);
 					}
 					
 					try{
