@@ -339,9 +339,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				nfca = authenticate(nfca);
 				
 				// open access
-				nfca = enableProtection(nfca, false);
+				//nfca = enableProtection(nfca, false);
 				
-				
+				/*
 				try{
 					nfca.close();
 				}catch(Exception e){
@@ -395,7 +395,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				nfca = authenticate(nfca);
 				
 				Log.d(TAG, "Authenticated...");
-				
+				*/
 				// close access
 				nfca = enableProtection(nfca, true);
 				
@@ -428,6 +428,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Log.d(TAG, "Set PWD and PACK");
 				
+				/*
 				try {
 					nfca.close();
 					Log.d(TAG, "NFCA Closed");
@@ -435,8 +436,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "IOException Error: " + e.getMessage());
 					//e.printStackTrace();
 				}
+				*/
 				
-				/*
+				
 				byte[] ndefMessage = message.toByteArray();
 				
 				// wrap into TLV structure
@@ -476,7 +478,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "IOException Error: " + e.getMessage());
 					e.printStackTrace();
 				}
-				*/
+				
 				
 				callbackContext.success();
 				
