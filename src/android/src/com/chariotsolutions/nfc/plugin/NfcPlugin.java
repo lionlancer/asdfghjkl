@@ -829,7 +829,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						// find out if tag is password protected
 						response = nfca.transceive(new byte[] {
 							(byte) 0x30, // READ
-							(byte) 0x83  // page address
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
 						});
 					}catch(Exception e){
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
