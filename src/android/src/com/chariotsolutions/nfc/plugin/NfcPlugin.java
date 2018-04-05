@@ -841,7 +841,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					// Authenticate with the tag first
 					// only if the Auth0 byte is not 0xFF,
 					// which is the default value meaning unprotected
-					if((response && (response[3] != (byte)0xFF)) || readProtected) {
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
 						
 						isProtected = true;
 						gNfcA = nfca;
