@@ -213,6 +213,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         if (!recycledIntent()) {
             parseMessage();
         }
+		
+		Log.d(TAG, "Returning success... ");
         callbackContext.success();
     }
 
@@ -945,7 +947,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
     private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages) {
 
-		if(isProtected) lockTag();
+		//if(isProtected) lockTag();
 		
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
@@ -959,7 +961,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     private void fireNdefFormatableEvent (Tag tag) {
 		
-		if(isProtected) lockTag();
+		//if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
         Log.v(TAG, command);
@@ -968,7 +970,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     private void fireTagEvent (Tag tag) {
 
-		if(isProtected) lockTag();
+		//if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
         Log.v(TAG, command);
@@ -1108,6 +1110,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         setIntent(intent);
         savedIntent = intent;
         parseMessage();
+		Log.d(TAG, "onNewIntent returned");
     }
 
     private Activity getActivity() {
