@@ -1021,6 +1021,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					String str = new String(response, "UTF-8");
 					Log.d(TAG, "response to UTF-8 String: " + str);
 					
+					String[] msgs = Arrays.toString(str.split("∩┐╜"));
+					
+					String msg = msgs[1];
+					Log.d(TAG, "Correct msg: " + msg);
+					
 					//fireNfcAEvent("NfcA", str);
 					
 					nfca.close();
