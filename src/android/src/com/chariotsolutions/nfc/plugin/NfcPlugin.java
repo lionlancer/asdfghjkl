@@ -1016,10 +1016,25 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							//(byte) (81 & 0x0FF)  // last page address
 							//(byte) 0x81  // last page address
 					});
+				
 					
 					Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
-					String str = new String(response, "UTF-8");
+					
+					String str = "";				
+				
+					str = new String(response, "UTF-8");
 					Log.d(TAG, "response to UTF-8 String: " + str);
+					
+					str = new String(response, "UTF-16");
+					Log.d(TAG, "response to UTF-16 String: " + str);			
+					
+					str = new String(response, "US-ASCII");
+					Log.d(TAG, "response to US-ASCII String: " + str);
+					
+					str = new String(response, "ISO-8859-1");
+					Log.d(TAG, "response to ISO-8859-1 String: " + str);
+					
+					
 					
 					String[] msgs = str.split("∩┐╜");
 					
@@ -1108,9 +1123,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private void fireTagEvent (Tag tag) {
 		
 		Log.d(TAG, "fireTagEvent called!");
-	
-		
-	
 	
 		if(isProtected) lockTag();
 		
