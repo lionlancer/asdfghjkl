@@ -84,8 +84,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
 	private String act = ""; 
 	private boolean isProtected = false;
+	private String gSaveType = "Read-Only";
 	private NfcA gNfcA;
 	private Tag gTag;
+	
 	
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -251,12 +253,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         writeNdefMessage(new NdefMessage(records), tag, callbackContext);
     }
 
-    private void writeTag(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void writeTag(JSONArray data, String saveType, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {  // TODO remove this and handle LostTag
             callbackContext.error("Failed to write tag, received null intent");
         }
 		
 		Log.d(TAG, "DATA: " + data.toString());
+		Log.d(TAG, "SaveType: " + saveType);
+		
+		gSaveType = saveType;
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
@@ -410,10 +415,19 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Log.d(TAG, "Authenticated...");
 				*/
-				// close access
-				nfca = enableProtection(nfca, true);
 				
-				Log.d(TAG, "EnabledProtection");
+				boolean protect;
+				if(gSaveType == "Read-Only"){
+					Log.d(TAG, "DisbledProtection");
+					protect = false;
+				}else{
+					Log.d(TAG, "EnabledProtection");
+					protect = true;
+				}
+					
+				// define access
+				nfca = enableProtection(nfca, protect);
+				
 				
 				try{
 					// Send PACK and PWD
@@ -962,7 +976,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						nfca = authenticate(nfca);
 						// open access
-						nfca = enableProtection(nfca, false);
+						//nfca = enableProtection(nfca, false);
 						
 						
 					}else {
