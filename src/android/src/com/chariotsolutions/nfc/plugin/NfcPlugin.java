@@ -131,8 +131,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
           removeDefaultTag(callbackContext);
 
         } else if (action.equalsIgnoreCase(WRITE_TAG)) {
-            JSONArray saveData = data.getJSONObject(0);
-            String saveType = data.getJSONObject(1);
+            JSONArray saveData = data.getJSONArray(0);
+            String saveType = data.getString(1);
 			
 			writeTag(saveData, saveType, callbackContext);
 
