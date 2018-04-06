@@ -958,7 +958,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						nfca = authenticate(nfca);
 						// open access
-						//nfca = enableProtection(nfca, false);
+						nfca = enableProtection(nfca, false);
 						
 						
 					}else {
@@ -1098,7 +1098,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
 		Log.d(TAG, "fireNdefEvent called!");
 	
-		if(isProtected) lockTag();
+		///if(isProtected) lockTag();
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
         String tag = jsonObject.toString();
@@ -1113,7 +1113,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		Log.d(TAG, "fireNdefFormatableEvent called!");
 		
-		if(isProtected) lockTag();
+		//if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
         Log.v(TAG, command);
@@ -1124,7 +1124,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		Log.d(TAG, "fireTagEvent called!");
 	
-		if(isProtected) lockTag();
+		//if(isProtected) enableProtection(gNfcA, true);
 		
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
         Log.v(TAG, command);
