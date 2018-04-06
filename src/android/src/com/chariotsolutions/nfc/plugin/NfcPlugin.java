@@ -962,6 +962,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
 				}
 				
+				setIntent(new Intent());
 				
                 if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
                     ndef = Ndef.get(tag);
@@ -1025,8 +1026,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
     private void fireNdefEvent(String type, Ndef ndef, Parcelable[] messages) {
 
+		Log.d(TAG, "fireNdefEvent called!");
+	
 		if(isProtected) lockTag();
-		
 	
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
         String tag = jsonObject.toString();
@@ -1039,6 +1041,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     private void fireNdefFormatableEvent (Tag tag) {
 		
+		Log.d(TAG, "fireNdefFormatableEvent called!");
+		
 		if(isProtected) lockTag();
 	
         String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
@@ -1047,9 +1051,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 
     private void fireTagEvent (Tag tag) {
-
-		if(isProtected) lockTag();
+		
+		Log.d(TAG, "fireTagEvent called!");
 	
+		if(isProtected) lockTag();
+		
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
