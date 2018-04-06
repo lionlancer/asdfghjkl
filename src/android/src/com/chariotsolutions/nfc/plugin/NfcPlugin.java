@@ -915,7 +915,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
                 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                 Parcelable[] messages = intent.getParcelableArrayExtra((NfcAdapter.EXTRA_NDEF_MESSAGES));
-
+				
+				Log.d(TAG, "Messages: " + Arrays.toString(messages));
+				
 				boolean isAuthOK = false;
 				
 				NfcA nfca = null;
@@ -990,7 +992,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 }
 
                 if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-                    fireTagEvent(tag);
+                    //fireTagEvent(tag);
+					Log.d(TAG, "Action: NfcAdapter.ACTION_TAG_DISCOVERED");
+					Log.d(TAG, "Imitating fireNdefEvent(NDEF_MIME, ndef, messages);");
+					ndef = Ndef.get(tag);
+                    fireNdefEvent(NDEF_MIME, ndef, messages);
                 }
 
                 setIntent(new Intent());
@@ -1062,6 +1068,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private void fireTagEvent (Tag tag) {
 		
 		Log.d(TAG, "fireTagEvent called!");
+	
+		
+	
 	
 		if(isProtected) lockTag();
 		
