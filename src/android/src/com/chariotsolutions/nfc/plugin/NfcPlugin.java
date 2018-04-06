@@ -335,13 +335,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] response;
 				boolean authError = true;
 				
+				
 				NfcA nfca = NfcA.get(tag);
 				
 				try{
+					Log.d(TAG, "NFCA Connecting...");
 					nfca.connect();
 				} catch (TagLostException e) {
+					Log.d(TAG, "NFCA Connect TagLostException Error: " + e.getMessage());
 					callbackContext.error("Connect TagLostException Error: " + e.getMessage());
 				} catch (IOException e) {
+					Log.d(TAG, "NFCA Connect IOException Error: " + e.getMessage());
 					callbackContext.error("Connect IOException Error: " + e.getMessage());
 				}	
 				
@@ -967,7 +971,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						isProtected = false;
 					}
 					
-					//nfca.close();
+					nfca.close();
 					
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
@@ -1004,7 +1008,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				*/
 				
 				if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-                    fireTagEvent(tag, nfca);
+                    
+					/*
+					try{
+						nfca.connect();
+					}catch(Exception e){
+						nfca.connect();
+					}
+					*/
+					
+					fireTagEvent(tag, nfca);
                 }
 				
                 setIntent(new Intent());
