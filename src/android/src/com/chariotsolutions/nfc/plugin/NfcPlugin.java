@@ -976,7 +976,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//setIntent(new Intent());
 				
 				// enable this if tag is already readable 
-                /*
+                
 				if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
                     ndef = Ndef.get(tag);
                     fireNdefEvent(NDEF_MIME, ndef, messages);
@@ -992,7 +992,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         }
                     }
                 }
-
+				
+				/*
                 if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
                     //fireTagEvent(tag);
 					Log.d(TAG, "Action: NfcAdapter.ACTION_TAG_DISCOVERED");
@@ -1001,54 +1002,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                     fireNdefEvent(NDEF_MIME, ndef, messages);
                 }
 				*/
-				
-				// USE NFCA TO READ DATA
-				try{
-					int start = 4;
-					//int last = 253;
-					int last = 249;
-					response = nfca.transceive(new byte[] {
-							(byte) 0x3A, // FAST_READ
-							//(byte) ((4 + start / 4) & 0x0FF),  // first page address
-							//(byte) (4 & 0x0FF),  // first page address
-							(byte) 0x04,  // first page address
-							(byte) ((4 + last / 4) & 0x0FF)  // last page address
-							//(byte) (81 & 0x0FF)  // last page address
-							//(byte) 0x81  // last page address
-					});
-				
-					
-					Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
-					
-					String str = "";				
-				
-					str = new String(response, "UTF-8");
-					Log.d(TAG, "response to UTF-8 String: " + str);
-					
-					str = new String(response, "UTF-16");
-					Log.d(TAG, "response to UTF-16 String: " + str);			
-					
-					str = new String(response, "US-ASCII");
-					Log.d(TAG, "response to US-ASCII String: " + str);
-					
-					str = new String(response, "ISO-8859-1");
-					Log.d(TAG, "response to ISO-8859-1 String: " + str);
-					
-					
-					
-					String[] msgs = str.split("∩┐╜");
-					
-					Log.d(TAG, "msgs: " + Arrays.toString(msgs));
-					
-					String msg = msgs[1];
-					Log.d(TAG, "Correct msg: " + msg);
-					
-					//fireNfcAEvent("NfcA", str);
-					
-					nfca.close();
-				}catch(Exception e){
-					Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
-				}
 				
 				if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
                     fireTagEvent(tag);
@@ -1120,12 +1073,61 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         this.webView.sendJavascript(command);
     }
 
-    private void fireTagEvent (Tag tag) {
+    private void fireTagEvent (Tag tag, NfcA nfca) {
 		
 		Log.d(TAG, "fireTagEvent called!");
 	
 		//if(isProtected) enableProtection(gNfcA, true);
+	
+		// USE NFCA TO READ DATA
+		try{
+			int start = 4;
+			//int last = 253;
+			int last = 249;
+			response = nfca.transceive(new byte[] {
+					(byte) 0x3A, // FAST_READ
+					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+					//(byte) (4 & 0x0FF),  // first page address
+					(byte) 0x04,  // first page address
+					(byte) ((4 + last / 4) & 0x0FF)  // last page address
+					//(byte) (81 & 0x0FF)  // last page address
+					//(byte) 0x81  // last page address
+			});
 		
+			
+			Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+			
+			String str = "";				
+		
+			
+			str = new String(response, "UTF-16");
+			Log.d(TAG, "response to UTF-16 String: " + str);			
+			
+			str = new String(response, "US-ASCII");
+			Log.d(TAG, "response to US-ASCII String: " + str);
+			
+			str = new String(response, "ISO-8859-1");
+			Log.d(TAG, "response to ISO-8859-1 String: " + str);
+			
+			str = new String(response, "UTF-8");
+			Log.d(TAG, "response to UTF-8 String: " + str);
+			
+			
+			String[] msgs = str.split("∩┐╜");
+			
+			Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+			
+			String msg = msgs[1];
+			Log.d(TAG, "Correct msg: " + msg);
+			
+			//fireNfcAEvent("NfcA", str);
+			
+			nfca.close();
+		}catch(Exception e){
+			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
+		}
+	
+	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
