@@ -278,7 +278,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Log.d(TAG, "WRITING DATA...");
 				
-				try {
+				// disabled as it crashes the app if tag is password protected
+				
+				/*try {
 					// use ndef to find out if card is writable or not
                     ndef = Ndef.get(tag);
                     if (ndef != null) {
@@ -328,7 +330,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "NDEF IOException Error: " + e.getMessage());
                     callbackContext.error(e.getMessage());
                 }
-				
+				*/
 				
 				byte[] response;
 				boolean authError = true;
