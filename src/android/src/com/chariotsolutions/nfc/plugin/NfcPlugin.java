@@ -1023,6 +1023,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					String[] msgs = str.split("∩┐╜");
 					
+					Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+					
 					String msg = msgs[1];
 					Log.d(TAG, "Correct msg: " + msg);
 					
