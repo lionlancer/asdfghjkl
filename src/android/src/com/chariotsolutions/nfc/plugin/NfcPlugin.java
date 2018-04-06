@@ -1028,6 +1028,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 				}
 				
+				if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+                    fireTagEvent(tag);
+                }
 				
                 setIntent(new Intent());
 				
