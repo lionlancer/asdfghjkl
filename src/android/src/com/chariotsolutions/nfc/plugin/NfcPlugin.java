@@ -967,7 +967,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						isProtected = false;
 					}
 					
-					nfca.close();
+					//nfca.close();
 					
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
