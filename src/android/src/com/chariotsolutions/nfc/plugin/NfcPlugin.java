@@ -1099,6 +1099,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			nfca.connect();
 			
+			nfca = authenticate(nfca);
+			
 			int start = 4;
 			//int last = 253;
 			int last = 249;
