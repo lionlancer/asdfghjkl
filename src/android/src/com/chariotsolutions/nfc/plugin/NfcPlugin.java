@@ -1069,7 +1069,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         JSONObject jsonObject = buildNdefJSON(ndef, messages);
         String tag = jsonObject.toString();
 
-        String command = MessageFormat.format(javaScriptEventTemplate, type, tag);
+        String command = MessageFormat.format(javaScriptEventTemplate, type, tag, "");
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
 
@@ -1081,7 +1081,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		//if(isProtected) lockTag();
 	
-        String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
+        String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag), "");
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
@@ -1091,6 +1091,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		Log.d(TAG, "fireTagEvent called!");
 	
 		//if(isProtected) enableProtection(gNfcA, true);
+	
+		String str = "";
 	
 		// USE NFCA TO READ DATA
 		try{
@@ -1111,7 +1113,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
 			
-			String str = "";				
+							
 		
 			
 			str = new String(response, "UTF-16");
@@ -1131,8 +1133,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			Log.d(TAG, "msgs: " + Arrays.toString(msgs));
 			
-			String msg = msgs[1];
-			Log.d(TAG, "Correct msg: " + msg);
+			//String msg = msgs[1];
+			//Log.d(TAG, "Correct msg: " + msg);
 			
 			//fireNfcAEvent("NfcA", str);
 			
@@ -1141,8 +1143,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 		}
 	
+		
 	
-        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
+        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), str);
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
@@ -1299,6 +1302,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         "var e = document.createEvent(''Events'');\n" +
         "e.initEvent(''{0}'');\n" +
         "e.tag = {1};\n" +
+		"e.data = {2};\n" +
         "document.dispatchEvent(e);";
 
     @Override

@@ -1936,6 +1936,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         "var e = document.createEvent(''Events'');\n" +
         "e.initEvent(''{0}'');\n" +
         "e.tag = {1};\n" +
+		"e.data = {2};\n" +
         "document.dispatchEvent(e);";
 
     @Override
