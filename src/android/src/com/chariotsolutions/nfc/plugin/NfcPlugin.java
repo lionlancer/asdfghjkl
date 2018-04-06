@@ -958,7 +958,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						nfca = authenticate(nfca);
 						// open access
-						nfca = enableProtection(nfca, false);
+						//nfca = enableProtection(nfca, false);
 						
 						
 					}else {
@@ -973,9 +973,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
 				}
 				
-				setIntent(new Intent());
+				//setIntent(new Intent());
 				
-                if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+				// enable this if tag is already readable 
+                /*
+				if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
                     ndef = Ndef.get(tag);
                     fireNdefEvent(NDEF_MIME, ndef, messages);
 
@@ -998,7 +1000,35 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					ndef = Ndef.get(tag);
                     fireNdefEvent(NDEF_MIME, ndef, messages);
                 }
-
+				*/
+				
+				// USE NFCA TO READ DATA
+				try{
+					int start = 4;
+					//int last = 253;
+					int last = 249;
+					response = nfca.transceive(new byte[] {
+							(byte) 0x3A, // FAST_READ
+							//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+							//(byte) (4 & 0x0FF),  // first page address
+							(byte) 0x04,  // first page address
+							(byte) ((4 + last / 4) & 0x0FF)  // last page address
+							//(byte) (81 & 0x0FF)  // last page address
+							//(byte) 0x81  // last page address
+					});
+					
+					Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+					String str = new String(response, "UTF-8");
+					Log.d(TAG, "response to UTF-8 String: " + str);
+					
+					//fireNfcAEvent("NfcA", str);
+					
+					nfca.close();
+				}catch(Exception e){
+					Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
+				}
+				
+				
                 setIntent(new Intent());
 				
 				/*
