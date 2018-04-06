@@ -1097,6 +1097,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		// USE NFCA TO READ DATA
 		try{
 			
+			nfca.connect();
+			
 			int start = 4;
 			//int last = 253;
 			int last = 249;
@@ -1113,8 +1115,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
 			
-							
-		
 			
 			str = new String(response, "UTF-16");
 			Log.d(TAG, "response to UTF-16 String: " + str);			
