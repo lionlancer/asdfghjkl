@@ -411,7 +411,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				Log.d(TAG, "Authenticated...");
 				*/
 				// close access
-				nfca = enableProtection(nfca, false);
+				nfca = enableProtection(nfca, true);
 				
 				Log.d(TAG, "EnabledProtection");
 				
