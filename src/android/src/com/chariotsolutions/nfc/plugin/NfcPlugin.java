@@ -296,29 +296,36 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                                 //callbackContext.success();
                             }
                         } else {
+							Log.d(TAG, "Tag is read only!");
                             callbackContext.error("Tag is read only");
                         }
                         
 						ndef.close();
 						
                     } else {
+						Log.d(TAG, "Formatting Tag...");
                         NdefFormatable formatable = NdefFormatable.get(tag);
                         if (formatable != null) {
                             formatable.connect();
                             formatable.format(message);
                             callbackContext.success();
                             formatable.close();
+							Log.d(TAG, "Format complete!");
                         } else {
+							Log.d(TAG, "Tag does not support NDEF!");
                             callbackContext.error("Tag doesn't support NDEF");
                         }
                     }
 				
 				} catch (FormatException e) {
+					Log.d(TAG, "NDEF FormatException Error: " + e.getMessage());
                     callbackContext.error(e.getMessage());
 					
                 } catch (TagLostException e) {
-                    callbackContext.error(e.getMessage());
+                    Log.d(TAG, "NDEF TagLostException Error: " + e.getMessage());
+					callbackContext.error(e.getMessage());
                 } catch (IOException e) {
+					Log.d(TAG, "NDEF IOException Error: " + e.getMessage());
                     callbackContext.error(e.getMessage());
                 }
 				
