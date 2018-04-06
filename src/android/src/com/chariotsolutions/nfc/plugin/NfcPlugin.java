@@ -420,7 +420,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				*/
 				
 				boolean protect;
-				if(gSaveType == "Read-Only"){
+				if(gSaveType.equalsIgnoreCase("Read-Only")){
 					Log.d(TAG, "DisbledProtection");
 					protect = false;
 				}else{
