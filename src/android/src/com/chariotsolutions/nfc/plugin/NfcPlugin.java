@@ -94,7 +94,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		act = action;
         Log.d(TAG, "execute " + action);
-
+		
         // showSettings can be called if NFC is disabled
         // might want to skip this if NO_NFC
         if (action.equalsIgnoreCase(SHOW_SETTINGS)) {
@@ -131,7 +131,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
           removeDefaultTag(callbackContext);
 
         } else if (action.equalsIgnoreCase(WRITE_TAG)) {
-            writeTag(data, callbackContext);
+            JSONObject saveData = args.getJSONObject(0);
+            JSONObject saveType = args.getJSONObject(1);
+			
+			writeTag(saveData, saveType, callbackContext);
 
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
