@@ -1182,8 +1182,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		Log.d(TAG, "Replacing \\\\: " + escapedStr);
 		
 		//escapedStr = escapedStr.replaceAll("\/", "\\/");
-		escapedStr = escapedStr.replaceAll("\\b", "\\\\b");
-		Log.d(TAG, "Replacing \\b: " + escapedStr);
+		//escapedStr = escapedStr.replaceAll("\\b", "\\\\b");
+		//Log.d(TAG, "Replacing \\b: " + escapedStr);
 		
 		escapedStr = escapedStr.replaceAll("\\f", "\\\\f");
 		Log.d(TAG, "Replacing \\f: " + escapedStr);
