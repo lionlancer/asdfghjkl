@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.nio.charset.Charset;
+import java.lang.Object.StringEscapeUtils;
 
 // using wildcard imports so we can support Cordova 3.x
 import org.apache.cordova.*; // Cordova 3.x
@@ -1145,12 +1146,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "response to ISO-8859-1 String: " + str);
 			
 			str = new String(response, "UTF-8");
+			//str = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "response to UTF-8 String: " + str);
+			Log.d(TAG, "response to UTF-8 String (escaped): " + escapedStr(str));
 			
 			
-			String[] msgs = str.split("∩┐╜");
 			
-			Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+			//String[] msgs = str.split("∩┐╜");
+			
+			//Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+			
+			
 			
 			//String msg = msgs[1];
 			//Log.d(TAG, "Correct msg: " + msg);
@@ -1162,13 +1168,25 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 		}
 	
-		
-	
-        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), str);
+        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
 
+	private String escapeStr(String str){
+		String escapedStr = str;
+		
+		escapedStr = escapedStr.replaceAll("\\", "\\\\");
+		escapedStr = escapedStr.replaceAll("\/", "\\/");
+		escapedStr = escapedStr.replaceAll("\b", "\\b");
+		escapedStr = escapedStr.replaceAll("\f", "\\f");
+		escapedStr = escapedStr.replaceAll("\n", "\\n");
+		escapedStr = escapedStr.replaceAll("\r", "\\r");
+		escapedStr = escapedStr.replaceAll("\t", "\\t");
+		
+		return escapedStr;		
+	}
+	
 	private void lockTag(){
 		byte[] response;
 		
