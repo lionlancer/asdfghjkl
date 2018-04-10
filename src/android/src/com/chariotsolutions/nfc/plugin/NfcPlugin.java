@@ -1041,7 +1041,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					try{
 						nfca.connect();
 					}catch(Exception e){
-						nfca.connect();
+						nfca.close();
 					}
 					*/
 					
@@ -1125,7 +1125,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		// USE NFCA TO READ DATA
 		try{
 			
-			nfca.connect();
+			try{
+				nfca.connect();
+			}catch(Exception e){
+				//nfca.close();
+			}
 			
 			nfca = authenticate(nfca, callbackContext);
 			
