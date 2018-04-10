@@ -973,7 +973,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}catch(Exception e){
 						readProtected = true;
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
-						callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
+						if(callbackContext){
+							callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
+						}
 					}
 					
 					// Authenticate with the tag first
