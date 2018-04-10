@@ -928,7 +928,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         return techLists.toArray(new String[0][0]);
     }
 
-    void parseMessage(CallbackContext callbackContext) {
+    void parseMessage(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -1344,7 +1344,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         super.onNewIntent(intent);
         setIntent(intent);
         savedIntent = intent;
-		CallbackContext callbackContext;
+		CallbackContext callbackContext = null;
         parseMessage(callbackContext);
 		Log.d(TAG, "onNewIntent returned");
     }
