@@ -219,7 +219,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
         startNfc();
         if (!recycledIntent()) {
-            parseMessage();
+            parseMessage(callbackContext);
         }
 		
 		Log.d(TAG, "Returning success... ");
@@ -359,7 +359,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}	
 				
 				// authenticate
-				nfca = authenticate(nfca);
+				nfca = authenticate(nfca, callbackContext);
 				
 				// open access
 				//nfca = enableProtection(nfca, false);
@@ -430,7 +430,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 					
 				// define access
-				nfca = enableProtection(nfca, protect);
+				nfca = enableProtection(nfca, protect, callbackContext);
 				
 				
 				try{
@@ -522,7 +522,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         });
     }
 
-	private NfcA authenticate(NfcA nfca){
+	private NfcA authenticate(NfcA nfca, CallbackContext callbackContext){
 		
 		try {
 			byte[] response = nfca.transceive(new byte[]{
@@ -553,7 +553,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		return nfca;
 	}
 	
-	private NfcA enableProtection(NfcA nfca, boolean protect){
+	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
 		
 		byte[] response;
 		
@@ -928,7 +928,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         return techLists.toArray(new String[0][0]);
     }
 
-    void parseMessage() {
+    void parseMessage(CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -987,7 +987,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca);
+						nfca = authenticate(nfca, callbackContext);
 						// open access
 						//nfca = enableProtection(nfca, false);
 						
@@ -1002,7 +1002,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
-					callbackContext.error("Unlocking Error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
 				}
 				
 				//setIntent(new Intent());
@@ -1127,7 +1127,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			nfca.connect();
 			
-			nfca = authenticate(nfca);
+			nfca = authenticate(nfca, callbackContext);
 			
 			int start = 4;
 			//int last = 253;
@@ -1344,7 +1344,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         super.onNewIntent(intent);
         setIntent(intent);
         savedIntent = intent;
-        parseMessage();
+		CallbackContext callbackContext;
+        parseMessage(callbackContext);
 		Log.d(TAG, "onNewIntent returned");
     }
 
