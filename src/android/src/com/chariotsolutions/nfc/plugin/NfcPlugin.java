@@ -456,6 +456,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					});
 				}catch(Exception e){
 					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+					
+					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
 				}
 				
 				Log.d(TAG, "Set PWD and PACK");
@@ -499,6 +501,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					} catch (IOException e) {
 						Log.d(TAG, "Error:" + e.getMessage());
 						//e.printStackTrace();
+						callbackContext.error("Error writing to card: " + e.getMessage());
 					}
 				}
 				
@@ -509,6 +512,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				} catch (IOException e) {
 					Log.d(TAG, "IOException Error: " + e.getMessage());
 					e.printStackTrace();
+					callbackContext.error("IOException Error: " + e.getMessage());
 				}
 				
 				
@@ -534,6 +538,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] packResponse = Arrays.copyOf(response, 2);
 				if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
 					Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+					callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
 					//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
 				}else{
 					Log.d(TAG, "Tag authenticated!");
@@ -541,6 +546,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Tranceive Exception Error: " + e.getMessage());
+			callbackContext.error("Authentication Error: " + e.getMessage());
 			//e.printStackTrace();
 		}
 		
@@ -581,6 +587,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Error in Get Page 2Ah: " + e.getMessage());
+			callbackContext.error("Error in getting page 2Ah: " + e.getMessage());
 		}
 		
 		try{
@@ -603,6 +610,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "Configured Tag for protection!");
 		}catch(Exception e){
 			Log.d(TAG, "Error in Get Page 29h: " + e.getMessage());
+			callbackContext.error("Error in getting page 29h: " + e.getMessage());
 		}
 		
 		return nfca;
@@ -965,6 +973,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}catch(Exception e){
 						readProtected = true;
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+						callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
 					}
 					
 					// Authenticate with the tag first
@@ -993,6 +1002,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					callbackContext.error("Unlocking Error: " + e.getMessage());
 				}
 				
 				//setIntent(new Intent());
@@ -1166,6 +1176,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			nfca.close();
 		}catch(Exception e){
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
+			
+			callbackContext.error("Error reading card: " + e.getMessage());
 		}
 	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
