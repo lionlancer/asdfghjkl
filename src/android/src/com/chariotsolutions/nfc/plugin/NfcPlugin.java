@@ -1045,7 +1045,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 					*/
 					
-					fireTagEvent(tag, nfca);
+					fireTagEvent(tag, nfca, callbackContext);
                 }
 				
                 setIntent(new Intent());
@@ -1114,7 +1114,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         this.webView.sendJavascript(command);
     }
 
-    private void fireTagEvent (Tag tag, NfcA nfca) {
+    private void fireTagEvent (Tag tag, NfcA nfca, CallbackContext callbackContext) {
 		
 		Log.d(TAG, "fireTagEvent called!");
 	
