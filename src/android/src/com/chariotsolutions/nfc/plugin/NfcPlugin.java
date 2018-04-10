@@ -973,7 +973,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}catch(Exception e){
 						readProtected = true;
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
-						if(callbackContext){
+						if(callbackContext != null){
 							callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
 						}
 					}
@@ -1350,7 +1350,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         super.onNewIntent(intent);
         setIntent(intent);
         savedIntent = intent;
-		CallbackContext callbackContext = new CallbackContext();
+		CallbackContext callbackContext = null;
         parseMessage(callbackContext);
 		Log.d(TAG, "onNewIntent returned");
     }
