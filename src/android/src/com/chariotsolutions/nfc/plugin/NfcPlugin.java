@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.nio.charset.Charset;
-import java.lang.Object.StringEscapeUtils;
+//import java.lang.Object.StringEscapeUtils;
 
 // using wildcard imports so we can support Cordova 3.x
 import org.apache.cordova.*; // Cordova 3.x
@@ -1148,7 +1148,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			str = new String(response, "UTF-8");
 			//str = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "response to UTF-8 String: " + str);
-			Log.d(TAG, "response to UTF-8 String (escaped): " + escapedStr(str));
+			Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
 			
 			
 			
