@@ -120,7 +120,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "Saved PACK = " + pack);
 			
 			//callbackContext.success();
-			
+			/*
 			String javaScriptEventTemplate =
 			"var e = document.createEvent(''Events'');\n" +
 			"e.initEvent(''{0}'');\n" +
@@ -131,7 +131,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			String command = MessageFormat.format(javaScriptEventTemplate, GETPASSWORD, pwd, pack);
 			Log.v(TAG, command);
 			this.webView.sendJavascript(command);
-
+			*/
         }
 		
         // showSettings can be called if NFC is disabled
