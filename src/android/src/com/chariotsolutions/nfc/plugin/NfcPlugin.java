@@ -55,7 +55,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String ENABLED = "enabled";
     private static final String INIT = "init";
     private static final String SHOW_SETTINGS = "showSettings";
-
+	private static final String SETPASSWORD = "setPassword";
+	
     private static final String NDEF = "ndef";
     private static final String NDEF_MIME = "ndef-mime";
     private static final String NDEF_FORMATABLE = "ndef-formatable";
@@ -80,8 +81,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
 	// Password has to be 4 characters
 	// Password Acknowledge has to be 2 characters
-	private byte[] pwd      = "l10n".getBytes();
-	private	byte[] pack     = "sR".getBytes();
+	//private byte[] pwd      = "l10n".getBytes();
+	//private	byte[] pack     = "sR".getBytes();
+	private byte[] pwd;
+	private	byte[] pack;
+	
 	
 	private String act = ""; 
 	private boolean isProtected = false;
@@ -95,6 +99,19 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		act = action;
         Log.d(TAG, "execute " + action);
+		
+		if (action.equalsIgnoreCase(SETPASSWORD)) {
+            byte[] bpwd = data.getByteArray(0);
+            byte[] bpack = data.getByteArray(1);
+			
+			pwd = bpwd;
+			pack = back;
+			
+			Log.d(TAG, "PWD = " + pwd);
+			Log.d(TAG, "PWD = " + pwd);
+			
+			callbackContext.success();
+        }
 		
         // showSettings can be called if NFC is disabled
         // might want to skip this if NO_NFC
