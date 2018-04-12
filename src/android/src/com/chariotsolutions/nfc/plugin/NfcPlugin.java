@@ -344,6 +344,59 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] response;
 				boolean authError = true;
 				
+				boolean readProtected = false;
+				
+				try{
+					nfca = NfcA.get(tag);
+					nfca.connect();
+					
+					response = null;
+					
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
+						});
+					}catch(Exception e){
+						readProtected = true;
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+						//if(callbackContext != null){
+						//	callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
+						//}
+					}
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
+						
+						Log.d(TAG, "tag is protected!");
+						
+						isProtected = true;
+						gNfcA = nfca;
+						gTag = tag;
+						
+						nfca = authenticate(nfca, callbackContext);
+						// open access
+						//nfca = enableProtection(nfca, false);
+						
+						
+					}else {
+						Log.d(TAG, "tag is NOT protected!");
+						//isAuthOK = true;
+						isProtected = false;
+					}
+					
+					//nfca.close();
+					
+				}catch(Exception e){
+					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
+				}
+				
+				/*
 				
 				NfcA nfca = NfcA.get(tag);
 				
@@ -358,8 +411,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.error("Connect IOException Error: " + e.getMessage());
 				}	
 				
+				
 				// authenticate
 				nfca = authenticate(nfca, callbackContext);
+				*/
 				
 				// open access
 				//nfca = enableProtection(nfca, false);
@@ -421,6 +476,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				*/
 				
 				boolean protect;
+				
+				Log.d(TAG, "Save Type: " + gSaveType);
+				
 				if(gSaveType.equalsIgnoreCase("Read-Only")){
 					Log.d(TAG, "DisbledProtection");
 					protect = false;
