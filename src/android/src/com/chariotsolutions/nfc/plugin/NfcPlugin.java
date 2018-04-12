@@ -973,9 +973,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}catch(Exception e){
 						readProtected = true;
 						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
-						if(callbackContext != null){
-							callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
-						}
+						//if(callbackContext != null){
+						//	callbackContext.error("Unable to detect authentication. Error: " + e.getMessage());
+						//}
 					}
 					
 					// Authenticate with the tag first
@@ -1183,7 +1183,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		}catch(Exception e){
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 			
-			callbackContext.error("Error reading card: " + e.getMessage());
+			if(callbackContext != null){
+				callbackContext.error("Error reading card: " + e.getMessage());
+			}
 		}
 	
         String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
