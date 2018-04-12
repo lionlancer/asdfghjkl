@@ -56,6 +56,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String INIT = "init";
     private static final String SHOW_SETTINGS = "showSettings";
 	private static final String SETPASSWORD = "setPassword";
+	private static final String GETPASSWORD = "getPassword";
 	
     private static final String NDEF = "ndef";
     private static final String NDEF_MIME = "ndef-mime";
@@ -111,6 +112,26 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "PACK = " + pack);
 			
 			callbackContext.success();
+        }
+		
+		if (action.equalsIgnoreCase(GETPASSWORD)) {
+            
+			Log.d(TAG, "Saved PWD = " + pwd);
+			Log.d(TAG, "Saved PACK = " + pack);
+			
+			//callbackContext.success();
+			
+			String javaScriptEventTemplate =
+			"var e = document.createEvent(''Events'');\n" +
+			"e.initEvent(''{0}'');\n" +
+			"e.pwd = {1};\n" +
+			"e.pack = {2};\n" +
+			"document.dispatchEvent(e);";
+			
+			String command = MessageFormat.format(javaScriptEventTemplate, GETPASSWORD, pwd, pack);
+			Log.v(TAG, command);
+			this.webView.sendJavascript(command);
+
         }
 		
         // showSettings can be called if NFC is disabled

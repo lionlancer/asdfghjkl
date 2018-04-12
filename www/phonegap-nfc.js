@@ -416,6 +416,9 @@ var nfc = {
 		pack = util.stringToBytes(pack);
 		cordova.exec(win, fail, "NfcPlugin", "setPassword", [pwd, pack]);
 	},
+	getPassword: function (win, fail){
+		cordova.exec(win, fail, "NfcPlugin", "getPassword", []);
+	},
 	
     addTagDiscoveredListener: function (callback, win, fail) {
 		try{
