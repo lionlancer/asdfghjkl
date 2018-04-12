@@ -412,8 +412,8 @@ var ndef = {
 // nfc provides javascript wrappers to the native phonegap implementation
 var nfc = {
 	setPassword: function (pwd, pack, win, fail){
-		pwd = util.stringToBytes(pwd);
-		pack = util.stringToBytes(pack);
+		//pwd = util.stringToBytes(pwd);
+		//pack = util.stringToBytes(pack);
 		cordova.exec(win, fail, "NfcPlugin", "setPassword", [pwd, pack]);
 	},
 	getPassword: function (win, fail){

@@ -102,14 +102,21 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         Log.d(TAG, "execute " + action);
 		
 		if (action.equalsIgnoreCase(SETPASSWORD)) {
-            byte[] bpwd = data.getByteArray(0);
-            byte[] bpack = data.getByteArray(1);
+            String spwd = data.getString(0);
+            String spack = data.getString(1);
+			
+			byte[] bpwd = spwd.getBytes();
+			byte[] bpack = spack.getBytes();
 			
 			pwd = bpwd;
-			pack = back;
+			pack = bpack;
 			
-			Log.d(TAG, "PWD = " + pwd);
-			Log.d(TAG, "PACK = " + pack);
+			Log.d(TAG, "PWD = " + spwd);
+			Log.d(TAG, "PACK = " + spack);
+			
+			
+			Log.d(TAG, "BPWD = " + bpwd);
+			Log.d(TAG, "BPACK = " + bpack);
 			
 			callbackContext.success();
         }
