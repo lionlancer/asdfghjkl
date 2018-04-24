@@ -1519,6 +1519,49 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			//fireNfcAEvent("NfcA", str);
 			
+			
+			int start = 251;
+			//lastpage = 129
+			// (129 - 4) * 4 = 500
+			int last = 450;
+			//int last = (9 - 4 ) * 4;
+			
+			
+			
+			byte[] response = nfca.transceive(new byte[] {
+					(byte) 0x3A, // FAST_READ
+					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+					//(byte) (4 & 0x0FF),  // first page address
+					(byte) ((4 + start / 4) & 0x0FF),  // first page address
+					(byte) ((4 + last / 4) & 0x0FF)  // last page address
+					//(byte) (81 & 0x0FF)  // last page address
+					//(byte) 0x81  // last page address
+			});
+		
+			
+			Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response));
+			
+			
+			str = new String(response, "UTF-16");
+			Log.d(TAG, "2ND response to UTF-16 String: " + str);			
+			
+			str = new String(response, "US-ASCII");
+			Log.d(TAG, "2nD response to US-ASCII String: " + str);
+			
+			str = new String(response, "ISO-8859-1");
+			Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
+			
+			str = new String(response, "UTF-8");
+			//str = StringEscapeUtils.escapeJava(str);
+			Log.d(TAG, "2nD response to UTF-8 String: " + str);
+			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str));
+			
+			
+			
+			
+			
+			
+			
 			nfca.close();
 		}catch(Exception e){
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
