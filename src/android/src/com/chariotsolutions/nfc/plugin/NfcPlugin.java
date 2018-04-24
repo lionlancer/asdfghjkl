@@ -797,7 +797,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				for (int i = 0; i < encodedData.length; i += 4) {
 					byte[] command = new byte[] {
 							(byte)0xA2, // WRITE
-							(byte)((4 + j) / 4) & 0x0FF), // block address
+							(byte)((4 + j / 4) & 0x0FF), // block address
 							0, 0, 0, 0
 					};
 					
