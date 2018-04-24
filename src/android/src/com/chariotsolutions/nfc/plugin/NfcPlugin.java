@@ -583,25 +583,38 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				// wrap into TLV structure
 				byte[] tlvEncodedData = null;
-
+				
+				Log.d(TAG, "ndefMessageLenght: " + ndefMessage.length);
+				
 				tlvEncodedData = new byte[ndefMessage.length + 3];
+				Log.d(TAG, "tlvEncodedData: ndefMessage.length + 3");
+				Log.d(TAG, Arrays.toString(tlvEncodedData));
 				tlvEncodedData[0] = (byte)0x03;  // NDEF TLV tag
+				Log.d(TAG, "tlvEncodedData[0]:" + tlvEncodedData[0]);
 				tlvEncodedData[1] = (byte)(ndefMessage.length & 0x0FF);  // NDEF TLV length (1 byte)
+				Log.d(TAG, "tlvEncodedData[1]:" + tlvEncodedData[1]);
 				System.arraycopy(ndefMessage, 0, tlvEncodedData, 2, ndefMessage.length);
 				tlvEncodedData[2 + ndefMessage.length] = (byte)0xFE;  // Terminator TLV tag
-
+				Log.d(TAG, "tlvEncodedData[2 + ndefMessage.length]:" + tlvEncodedData[2 + ndefMessage.length]);
 				// fill up with zeros to block boundary:
 				tlvEncodedData = Arrays.copyOf(tlvEncodedData, (tlvEncodedData.length / 4 + 1) * 4);
+				Log.d(TAG, "new tlvEncodedData:");
+				Log.d(TAG, Arrays.toString(tlvEncodedData));
 				for (int i = 0; i < tlvEncodedData.length; i += 4) {
 					byte[] command = new byte[] {
 							(byte)0xA2, // WRITE
 							(byte)((4 + i / 4) & 0x0FF), // block address
 							0, 0, 0, 0
 					};
+					
+					Log.d(TAG, "Command:");
+					Log.d(TAG, Arrays.toString(command));
+					Log.d(TAG, "i:" + i);
+					
 					System.arraycopy(tlvEncodedData, i, command, 2, 4);
 					try {
 						response = nfca.transceive(command);
-						Log.d(TAG, "Response got!: " + Arrays.toString(response));
+						Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
 						//Log.d(TAG, response);
 						
 					} catch (IOException e) {
