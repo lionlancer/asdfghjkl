@@ -670,7 +670,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         });
     }
 
-	 private void writeData(final String value, final int page, final Tag tag, final CallbackContext callbackContext) {
+	private void writeData(final String value, final int page, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -842,7 +842,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 		});
 		
-	 }
+	}
+	
+	
 	
 	
 	private NfcA authenticate(NfcA nfca, CallbackContext callbackContext){
@@ -1459,8 +1461,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			nfca = authenticate(nfca, callbackContext);
 			
 			int start = 4;
+			//lastpage = 129
+			// (129 - 4) * 4 = 500
 			//int last = 253;
-			int last = 249;
+			int last = (129 - 4 ) * 4;
+			
+			
+			
 			byte[] response = nfca.transceive(new byte[] {
 					(byte) 0x3A, // FAST_READ
 					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
@@ -1516,6 +1523,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         this.webView.sendJavascript(command);
     }
 
+	
+	
+	
 	private String escapeStr(String str){
 		String escapedStr = str;
 		
