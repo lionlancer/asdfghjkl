@@ -1476,7 +1476,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			int last = 300;
 			//int last = (9 - 4 ) * 4;
 			
-			
+			/*
 			
 			byte[] response = nfca.transceive(new byte[] {
 					(byte) 0x3A, // FAST_READ
@@ -1506,7 +1506,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "response to UTF-8 String: " + str);
 			Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
 			
-			
+			*/	
 			
 			//String[] msgs = str.split("∩┐╜");
 			
