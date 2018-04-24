@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 //import java.lang.Object.StringEscapeUtils;
 
 // using wildcard imports so we can support Cordova 3.x
