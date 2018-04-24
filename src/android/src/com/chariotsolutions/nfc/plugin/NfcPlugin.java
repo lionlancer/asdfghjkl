@@ -612,6 +612,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "i:" + i);
 					
 					System.arraycopy(tlvEncodedData, i, command, 2, 4);
+					
+					Log.d(TAG, "New Command after copy:");
+					Log.d(TAG, Arrays.toString(command));
+					
 					try {
 						response = nfca.transceive(command);
 						Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
