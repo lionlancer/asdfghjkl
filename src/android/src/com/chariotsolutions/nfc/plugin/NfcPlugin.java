@@ -668,7 +668,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         });
     }
 
-	 private void writeToPage(final String value, final int page, final Tag tag, final CallbackContext callbackContext) {
+	 private void writeData(final String value, final int page, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
