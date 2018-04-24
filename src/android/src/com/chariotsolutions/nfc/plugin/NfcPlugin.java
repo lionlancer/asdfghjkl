@@ -783,6 +783,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				Log.d(TAG, "tlvEncodedData: nvalue.length");
 				Log.d(TAG, Arrays.toString(encodedData));
 				
+				System.arraycopy(nvalue, 0, encodedData, 0, nvalue.length);
 				
 				// fill up with zeros to block boundary:
 				encodedData = Arrays.copyOf(encodedData, (encodedData.length / 4 + 1) * 4);
