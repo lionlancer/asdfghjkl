@@ -1476,7 +1476,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			int last = 129;
 			//int last = (66 - 4 ) * 4;
 			
-			int length = nfca.getMaxTranceiveLength();
+			int length = nfca.getMaxTransceiveLength();
 			Log.d(TAG, "Max Tranceive Length: " + length);
 			
 			
