@@ -1336,6 +1336,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				// enable this if tag is already readable 
                 
+				/*
 				if (action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
                     ndef = Ndef.get(tag);
                     fireNdefEvent(NDEF_MIME, ndef, messages);
@@ -1351,6 +1352,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                         }
                     }
                 }
+				*/
 				
 				/*
                 if (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
