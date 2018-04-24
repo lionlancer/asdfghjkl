@@ -1325,7 +1325,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						isProtected = false;
 					}
 					
-					nfca.close();
+					//nfca.close();
 					
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
@@ -1473,9 +1473,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			int start = 4;
 			//lastpage = 129
 			// (129 - 4) * 4 = 500
-			int last = 253;
+			int last = 129;
 			//int last = (66 - 4 ) * 4;
 			
+			int length = nfca.getMaxTranceiveLength();
+			Log.d(TAG, "Max Tranceive Length: " + length);
 			
 			
 			byte[] response = nfca.transceive(new byte[] {
@@ -1483,7 +1485,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
 					//(byte) (4 & 0x0FF),  // first page address
 					(byte) 0x04,  // first page address
-					(byte) ((4 + last / 4) & 0x0FF)  // last page address
+					//(byte) ((4 + last / 4) & 0x0FF)  // last page address
+					(byte) ((129 & 0x0FF)  // last page address
 					//(byte) (81 & 0x0FF)  // last page address
 					//(byte) 0x81  // last page address
 			});
