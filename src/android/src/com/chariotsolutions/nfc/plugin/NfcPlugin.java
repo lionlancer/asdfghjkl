@@ -330,7 +330,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             callbackContext.error("Failed to write tag, received null intent");
         }
 		
-		Log.d(TAG, "DATA: " + value);
+		Log.d(TAG, "VALUE: " + value);
+		Log.d(TAG, "PAGE: " + page);
 		Log.d(TAG, "SaveType: " + saveType);
 		
 		gSaveType = saveType;
