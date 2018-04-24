@@ -1528,7 +1528,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			
 			
-			byte[] response = nfca.transceive(new byte[] {
+			byte[] response2 = nfca.transceive(new byte[] {
 					(byte) 0x3A, // FAST_READ
 					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
 					//(byte) (4 & 0x0FF),  // first page address
@@ -1539,19 +1539,19 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			});
 		
 			
-			Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response));
+			Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response2));
 			
 			
-			str = new String(response, "UTF-16");
+			str = new String(response2, "UTF-16");
 			Log.d(TAG, "2ND response to UTF-16 String: " + str);			
 			
-			str = new String(response, "US-ASCII");
+			str = new String(response2, "US-ASCII");
 			Log.d(TAG, "2nD response to US-ASCII String: " + str);
 			
-			str = new String(response, "ISO-8859-1");
+			str = new String(response2, "ISO-8859-1");
 			Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
 			
-			str = new String(response, "UTF-8");
+			str = new String(response2, "UTF-8");
 			//str = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "2nD response to UTF-8 String: " + str);
 			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str));
