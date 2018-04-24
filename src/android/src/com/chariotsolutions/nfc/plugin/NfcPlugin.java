@@ -770,7 +770,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				
 				//byte[] nvalue = value.toByteArray();
-				byte[] nvalue = value.getBytes("UTF-8");
+				byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
 				
 				// wrap into TLV structure
 				byte[] encodedData = null;
