@@ -183,8 +183,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			writeTag(saveData, saveType, callbackContext);
         } else if (action.equalsIgnoreCase(WRITE_TO_PAGE)) {
-            String value = data.getJSONArray(0);
-            int page = data.getJSONArray(1);
+            String value = data.getString(0);
+            int page = Array.getInt(data,1);
             String saveType = data.getString(2);
 			
 			writeToPage(value, page, saveType, callbackContext);
@@ -323,6 +323,22 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
         writeNdefMessage(new NdefMessage(records), tag, callbackContext);
     }
+	
+	private void writeToPage(String value, int page, String saveType, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+		Log.d(TAG, "DATA: " + value);
+		Log.d(TAG, "SaveType: " + saveType);
+		
+		gSaveType = saveType;
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        writeData(value, page, tag, callbackContext);
+    }
+	
+	
 
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
