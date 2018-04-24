@@ -789,12 +789,19 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				Log.d(TAG, "new tlvEncodedData:");
 				Log.d(TAG, Arrays.toString(encodedData));
 				
-				for (int i = page - 4; i < encodedData.length; i += 4) {
+				//page 32 = 112
+				//112 / 4 = 28 +4 = 32 
+				
+				int j = (page - 4) * 4;
+				
+				for (int i = 0; i < encodedData.length; i += 4) {
 					byte[] command = new byte[] {
 							(byte)0xA2, // WRITE
-							(byte)((4 + i / 4) & 0x0FF), // block address
+							(byte)((4 + j) / 4) & 0x0FF), // block address
 							0, 0, 0, 0
 					};
+					
+					j += 4;
 					
 					Log.d(TAG, "Command:");
 					Log.d(TAG, Arrays.toString(command));
