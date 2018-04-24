@@ -184,7 +184,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			writeTag(saveData, saveType, callbackContext);
         } else if (action.equalsIgnoreCase(WRITE_TO_PAGE)) {
             String value = data.getString(0);
-            int page = Array.getInt(data,1);
+            int page = data.getInt(1);
             String saveType = data.getString(2);
 			
 			writeToPage(value, page, saveType, callbackContext);
@@ -769,7 +769,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				Log.d(TAG, "Set PWD and PACK");
 				
 				
-				byte[] nvalue = value.toByteArray();
+				//byte[] nvalue = value.toByteArray();
+				byte[] nvalue = value.getBytes("UTF-8");
 				
 				// wrap into TLV structure
 				byte[] encodedData = null;
