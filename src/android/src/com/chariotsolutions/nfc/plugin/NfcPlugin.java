@@ -1470,13 +1470,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			nfca = authenticate(nfca, callbackContext);
 			
+			nfca.setTimeout(600);
+			
 			int start = 4;
 			//lastpage = 129
 			// (129 - 4) * 4 = 500
 			int last = 300;
 			//int last = (9 - 4 ) * 4;
 			
-			/*
 			
 			byte[] response = nfca.transceive(new byte[] {
 					(byte) 0x3A, // FAST_READ
@@ -1506,7 +1507,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "response to UTF-8 String: " + str);
 			Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
 			
-			*/	
+			
 			
 			//String[] msgs = str.split("∩┐╜");
 			
@@ -1519,7 +1520,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			//fireNfcAEvent("NfcA", str);
 			
-			
+			/*
 			start = 251;
 			//lastpage = 129
 			// (129 - 4) * 4 = 500
@@ -1556,7 +1557,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "2nD response to UTF-8 String: " + str);
 			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str));
 			
-			
+			*/
 			
 			
 			
