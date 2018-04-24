@@ -1474,7 +1474,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//lastpage = 129
 			// (129 - 4) * 4 = 500
 			//int last = 253;
-			int last = (129 - 4 ) * 4;
+			int last = (92 - 4 ) * 4;
 			
 			
 			
