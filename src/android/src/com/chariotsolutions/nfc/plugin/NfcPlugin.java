@@ -1033,7 +1033,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						}
 					
 					}catch(JSONException e){
-						callback.error("Error writing to card: " + e.getMessage())
+						callback.error("Error writing to card: " + e.getMessage());
 					}
 				
 				}
