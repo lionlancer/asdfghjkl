@@ -970,8 +970,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				for(int l = 0; l < data.length; l++){
 					JSONObject dta = data.getJSONObject(l);
 					
-					String value = dta.getString('value');
-					int page = dta.getInt('page');
+					String value = dta.getString("value");
+					int page = dta.getInt("page");
 				
 				
 					//byte[] nvalue = value.toByteArray();
