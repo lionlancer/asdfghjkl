@@ -1730,7 +1730,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			str = new String(response, "UTF-8");
 			//str = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "response to UTF-8 String: " + str);
-			Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
+			//Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
 			
 			
 			
@@ -1780,17 +1780,18 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			str2 = new String(response2, "UTF-8");
 			//str2 = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "2nD response to UTF-8 String: " + str2);
-			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
+			//Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
 			
 			
 			// combine both readings
 			String rData = str + str2;
 			Log.d(TAG, "Returned String: " + rData);
 			
-			String[] data = rData.split("\\|\\|", 0);
-			Log.d(TAG, "Returned Data: " + data);
+			//String[] data = rData.split("\\|\\|", 0);
+			//Log.d(TAG, "Returned Data: " + data);
 			
-			str = data.toString();
+			//str = data.toString();
+			str = rData;
 			
 			nfca.close();
 		}catch(Exception e){
