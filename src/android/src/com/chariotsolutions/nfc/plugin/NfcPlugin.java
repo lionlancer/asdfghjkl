@@ -48,6 +48,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String REMOVE_DEFAULT_TAG = "removeTag";
     private static final String WRITE_TAG = "writeTag";
     private static final String WRITE_TO_PAGE = "writeToPage";
+    private static final String WRITE_TO_PAGE2 = "writeToPage2";
     private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
     private static final String SHARE_TAG = "shareTag";
@@ -189,6 +190,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             String saveType = data.getString(2);
 			
 			writeToPage(value, page, saveType, callbackContext);
+		
+		} else if (action.equalsIgnoreCase(WRITE_TO_PAGE2)) {
+            JSONArray data = data.getJSONArray(0);
+            String saveType = data.getString(1);
+			
+			writeToPage2(data, saveType, callbackContext);
 
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
@@ -340,6 +347,20 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         writeData(value, page, tag, callbackContext);
     }
 	
+	private void writeToPage2(JSONArray data, String saveType, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+		Log.d(TAG, "DATA: " + Array.toString(data));
+		Log.d(TAG, "PAGE: " + page);
+		Log.d(TAG, "SaveType: " + saveType);
+		
+		gSaveType = saveType;
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        writeData2(data, tag, callbackContext);
+    }
 	
 
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
@@ -844,7 +865,188 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 	}
 	
-	
+	private void writeData2(final JSONArray data, final Tag tag, final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+				
+				byte[] response;
+				boolean authError = true;
+				
+				boolean readProtected = false;
+				
+				NfcA nfca = NfcA.get(tag);
+				
+				try{ nfca.connect();}
+				catch(Exception e){}
+				
+				try{
+					
+					response = null;
+					
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
+						});
+					}catch(Exception e){
+						readProtected = true;
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+					}
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
+						
+						Log.d(TAG, "tag is protected!");
+						
+						isProtected = true;
+						gNfcA = nfca;
+						gTag = tag;
+						
+						nfca = authenticate(nfca, callbackContext);
+						
+					}else {
+						Log.d(TAG, "tag is NOT protected!");
+						//isAuthOK = true;
+						isProtected = false;
+					}
+					
+				}catch(Exception e){
+					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
+				}
+				
+				boolean protect;
+				
+				Log.d(TAG, "Save Type: " + gSaveType);
+				
+				if(gSaveType.equalsIgnoreCase("Read-Only")){
+					Log.d(TAG, "DisbledProtection");
+					protect = false;
+				}else{
+					Log.d(TAG, "EnabledProtection");
+					protect = true;
+				}
+					
+				// define access
+				nfca = enableProtection(nfca, protect, callbackContext);
+				
+				
+				try{
+					// Send PACK and PWD
+					// set PACK:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x86,
+							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+					});
+					// set PWD:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x85,
+							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+					});
+					
+					nfca.transceive(new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)3,    // block address
+							//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
+							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
+					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+					
+					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
+				}
+				
+				Log.d(TAG, "Set PWD and PACK");
+				
+				nfca.setTimeout(900);
+				
+				for(int l = 0; l < data.length; l++){
+					JSONObject dta = data.getJSONObject(l);
+					
+					String value = dta.getString('value');
+					int page = dta.getInt('page');
+				
+				
+					//byte[] nvalue = value.toByteArray();
+					byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
+					
+					// wrap into TLV structure
+					byte[] encodedData = null;
+					
+					Log.d(TAG, "nvalueLength: " + nvalue.length);
+					
+					encodedData = new byte[nvalue.length];
+					Log.d(TAG, "tlvEncodedData: nvalue.length");
+					Log.d(TAG, Arrays.toString(encodedData));
+					
+					System.arraycopy(nvalue, 0, encodedData, 0, nvalue.length);
+					
+					// fill up with zeros to block boundary:
+					encodedData = Arrays.copyOf(encodedData, (encodedData.length / 4 + 1) * 4);
+					Log.d(TAG, "new tlvEncodedData:");
+					Log.d(TAG, Arrays.toString(encodedData));
+					
+					//page 32 = 112
+					//112 / 4 = 28 +4 = 32 
+					
+					int j = (page - 4) * 4;
+					
+					for (int i = 0; i < encodedData.length; i += 4) {
+						byte[] command = new byte[] {
+								(byte)0xA2, // WRITE
+								(byte)((4 + j / 4) & 0x0FF), // block address
+								0, 0, 0, 0
+						};
+						
+						j += 4;
+						
+						Log.d(TAG, "Command:");
+						Log.d(TAG, Arrays.toString(command));
+						Log.d(TAG, "i:" + i);
+						
+						System.arraycopy(encodedData, i, command, 2, 4);
+						
+						Log.d(TAG, "New Command after copy:");
+						Log.d(TAG, Arrays.toString(command));
+						
+						try {
+							response = nfca.transceive(command);
+							Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
+							//Log.d(TAG, response);
+							
+						} catch (IOException e) {
+							Log.d(TAG, "Error:" + e.getMessage());
+							//e.printStackTrace();
+							callbackContext.error("Error writing to card: " + e.getMessage());
+						}
+					}
+				
+				}
+				
+				try {
+					nfca.close();
+					Log.d(TAG, "NFCA Closed");
+				} catch (IOException e) {
+					Log.d(TAG, "IOException Error: " + e.getMessage());
+					e.printStackTrace();
+					callbackContext.error("IOException Error: " + e.getMessage());
+				}
+				
+				
+				callbackContext.success();
+				
+			}
+			
+		});
+		
+	}
 	
 	
 	private NfcA authenticate(NfcA nfca, CallbackContext callbackContext){
@@ -1470,7 +1672,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			nfca = authenticate(nfca, callbackContext);
 			
-			nfca.setTimeout(600);
+			nfca.setTimeout(900);
 			
 			int start = 4;
 			//lastpage = 129
