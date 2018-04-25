@@ -192,10 +192,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			writeToPage(value, page, saveType, callbackContext);
 		
 		} else if (action.equalsIgnoreCase(WRITE_TO_PAGE2)) {
-            JSONArray data = data.getJSONArray(0);
+            JSONArray jdata = data.getJSONArray(0);
             String saveType = data.getString(1);
 			
-			writeToPage2(data, saveType, callbackContext);
+			writeToPage2(jdata, saveType, callbackContext);
 
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
@@ -353,7 +353,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         }
 		
 		Log.d(TAG, "DATA: " + Array.toString(data));
-		Log.d(TAG, "PAGE: " + page);
 		Log.d(TAG, "SaveType: " + saveType);
 		
 		gSaveType = saveType;
