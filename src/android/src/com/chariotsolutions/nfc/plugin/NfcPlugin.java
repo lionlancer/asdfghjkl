@@ -1778,7 +1778,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
 			
 			str2 = new String(response2, "UTF-8");
-			str2 = StringEscapeUtils.escapeJava(str);
+			//str2 = StringEscapeUtils.escapeJava(str);
 			Log.d(TAG, "2nD response to UTF-8 String: " + str2);
 			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
 			
