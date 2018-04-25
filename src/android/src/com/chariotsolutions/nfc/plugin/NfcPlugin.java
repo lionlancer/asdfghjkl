@@ -1067,7 +1067,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
 	private String expandCharacters(String string, int maxLength) { 
 		char[] asChars = Arrays.copyOf(string.toCharArray(), maxLength); 
-		Arrays.fill(asChars, string.length(), asChars.length - 1, '^'); 
+		Arrays.fill(asChars, string.length(), asChars.length, '^'); 
 		return new String(asChars); 
 	}
 	
