@@ -1791,7 +1791,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//Log.d(TAG, "Returned Data: " + data);
 			
 			//str = data.toString();
-			str = rData;
+			str = cleanData(rData);
+			Log.d(TAG, "Cleaned Data: " + str);
 			
 			nfca.close();
 		}catch(Exception e){
@@ -1809,7 +1810,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 
 	
-	
+	private String cleanData(String str){
+		String cleanedStr = "";
+		
+		Log.d(TAG, "Cleaning: " + str);
+		
+		cleanedStr = str.replaceAll("└Ç", "");
+		Log.d(TAG, "Replacing └Ç: " + cleanedStr);
+		
+		return cleanedStr;		
+	}
 	
 	private String escapeStr(String str){
 		String escapedStr = str;
