@@ -352,7 +352,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             callbackContext.error("Failed to write tag, received null intent");
         }
 		
-		Log.d(TAG, "DATA: " + Arrays.toString(data));
+		Log.d(TAG, "DATA: " + data.toString());
 		Log.d(TAG, "SaveType: " + saveType);
 		
 		gSaveType = saveType;
@@ -966,7 +966,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				nfca.setTimeout(900);
 				
-				for(int l = 0; l < data.length; l++){
+				for(int l = 0; l < data.length(); l++){
 					JSONObject dta = data.getJSONObject(l);
 					
 					String value = dta.getString("value");
