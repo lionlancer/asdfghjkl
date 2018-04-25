@@ -1067,7 +1067,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
 	private String expandCharacters(String string, int maxLength) { 
 		char[] asChars = Arrays.copyOf(string.toCharArray(), maxLength); 
-		Arrays.fill(asChars, string.length(), asChars.length - 1, ' '); 
+		Arrays.fill(asChars, string.length(), asChars.length - 1, '^'); 
 		return new String(asChars); 
 	}
 	
@@ -1815,10 +1815,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		Log.d(TAG, "Cleaning: " + str);
 		
-		cleanedStr = str.replaceAll("└Ç", "");
-		Log.d(TAG, "Replacing └Ç: " + cleanedStr);
+		cleanedStr = str.replaceAll("\\^", "");
+		Log.d(TAG, "Replacing ^: " + cleanedStr);
 		
-		return cleanedStr;		
+		return cleanedStr;
 	}
 	
 	private String escapeStr(String str){
