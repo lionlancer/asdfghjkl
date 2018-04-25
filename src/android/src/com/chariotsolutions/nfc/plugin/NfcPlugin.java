@@ -974,9 +974,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						String value = dta.getString("value");
 						int page = dta.getInt("page");
-					
+						int maxlength = dta.getInt("length");
 						
-					
+						if(value.length < maxlength){
+							value = expandCharacters(value, maxLength);
+						}
 					
 						//byte[] nvalue = value.toByteArray();
 						byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
@@ -1056,6 +1058,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 	}
 	
+	private String expandCharacters(String string, int maxLength) { 
+		char[] asChars = Arrays.copyOf(string.toCharArray(), maxLength); 
+		Arrays.fill(asChars, string.length(), asChars.length - 1, ' '); 
+		return new String(asChars); 
+	}
 	
 	private NfcA authenticate(NfcA nfca, CallbackContext callbackContext){
 		
