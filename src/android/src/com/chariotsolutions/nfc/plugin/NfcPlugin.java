@@ -976,9 +976,16 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						int page = dta.getInt("page");
 						int maxlength = dta.getInt("length");
 						
+						Log.d(TAG, "Value: " + value);
+						Log.d(TAG, "Page: " + page);
+						Log.d(TAG, "MaxLength: " + maxLength);
+						
 						if(value.length < maxlength){
 							value = expandCharacters(value, maxLength);
 						}
+						
+						Log.d(TAG, "New Value: " + value);
+						
 					
 						//byte[] nvalue = value.toByteArray();
 						byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
