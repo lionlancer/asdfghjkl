@@ -1682,6 +1682,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		//if(isProtected) enableProtection(gNfcA, true);
 	
 		String str = "";
+		String str2 = "";
 	
 		// USE NFCA TO READ DATA
 		try{
@@ -1717,14 +1718,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
 			
 			
-			str = new String(response, "UTF-16");
-			Log.d(TAG, "response to UTF-16 String: " + str);			
+			//str = new String(response, "UTF-16");
+			//Log.d(TAG, "response to UTF-16 String: " + str);			
 			
-			str = new String(response, "US-ASCII");
-			Log.d(TAG, "response to US-ASCII String: " + str);
+			//str = new String(response, "US-ASCII");
+			//Log.d(TAG, "response to US-ASCII String: " + str);
 			
-			str = new String(response, "ISO-8859-1");
-			Log.d(TAG, "response to ISO-8859-1 String: " + str);
+			//str = new String(response, "ISO-8859-1");
+			//Log.d(TAG, "response to ISO-8859-1 String: " + str);
 			
 			str = new String(response, "UTF-8");
 			//str = StringEscapeUtils.escapeJava(str);
@@ -1767,25 +1768,29 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response2));
 			
 			
-			str = new String(response2, "UTF-16");
-			Log.d(TAG, "2ND response to UTF-16 String: " + str);			
+			//str2 = new String(response2, "UTF-16");
+			//Log.d(TAG, "2ND response to UTF-16 String: " + str);			
 			
-			str = new String(response2, "US-ASCII");
-			Log.d(TAG, "2nD response to US-ASCII String: " + str);
+			//str2 = new String(response2, "US-ASCII");
+			//Log.d(TAG, "2nD response to US-ASCII String: " + str);
 			
-			str = new String(response2, "ISO-8859-1");
-			Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
+			//str2 = new String(response2, "ISO-8859-1");
+			//Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
 			
-			str = new String(response2, "UTF-8");
-			//str = StringEscapeUtils.escapeJava(str);
-			Log.d(TAG, "2nD response to UTF-8 String: " + str);
-			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str));
-			
-			
+			str2 = new String(response2, "UTF-8");
+			str2 = StringEscapeUtils.escapeJava(str);
+			Log.d(TAG, "2nD response to UTF-8 String: " + str2);
+			Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
 			
 			
+			// combine both readings
+			String rData = str + str2;
+			Log.d(TAG, "Returned String: " + rData);
 			
+			String[] data = rData.split("\\|\\|", 0);
+			Log.d(TAG, "Returned Data: " + data);
 			
+			str = data.toString();
 			
 			nfca.close();
 		}catch(Exception e){
@@ -1796,7 +1801,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		}
 	
-        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
+        //String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
+        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), str);
         Log.v(TAG, command);
         this.webView.sendJavascript(command);
     }
