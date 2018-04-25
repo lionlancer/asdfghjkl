@@ -967,64 +967,73 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				nfca.setTimeout(900);
 				
 				for(int l = 0; l < data.length(); l++){
-					JSONObject dta = data.getJSONObject(l);
 					
-					String value = dta.getString("value");
-					int page = dta.getInt("page");
-				
-				
-					//byte[] nvalue = value.toByteArray();
-					byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
+					try{
 					
-					// wrap into TLV structure
-					byte[] encodedData = null;
-					
-					Log.d(TAG, "nvalueLength: " + nvalue.length);
-					
-					encodedData = new byte[nvalue.length];
-					Log.d(TAG, "tlvEncodedData: nvalue.length");
-					Log.d(TAG, Arrays.toString(encodedData));
-					
-					System.arraycopy(nvalue, 0, encodedData, 0, nvalue.length);
-					
-					// fill up with zeros to block boundary:
-					encodedData = Arrays.copyOf(encodedData, (encodedData.length / 4 + 1) * 4);
-					Log.d(TAG, "new tlvEncodedData:");
-					Log.d(TAG, Arrays.toString(encodedData));
-					
-					//page 32 = 112
-					//112 / 4 = 28 +4 = 32 
-					
-					int j = (page - 4) * 4;
-					
-					for (int i = 0; i < encodedData.length; i += 4) {
-						byte[] command = new byte[] {
-								(byte)0xA2, // WRITE
-								(byte)((4 + j / 4) & 0x0FF), // block address
-								0, 0, 0, 0
-						};
+						JSONObject dta = data.getJSONObject(l);
 						
-						j += 4;
+						String value = dta.getString("value");
+						int page = dta.getInt("page");
+					
 						
-						Log.d(TAG, "Command:");
-						Log.d(TAG, Arrays.toString(command));
-						Log.d(TAG, "i:" + i);
+					
+					
+						//byte[] nvalue = value.toByteArray();
+						byte[] nvalue = value.getBytes(StandardCharsets.UTF_8);
 						
-						System.arraycopy(encodedData, i, command, 2, 4);
+						// wrap into TLV structure
+						byte[] encodedData = null;
 						
-						Log.d(TAG, "New Command after copy:");
-						Log.d(TAG, Arrays.toString(command));
+						Log.d(TAG, "nvalueLength: " + nvalue.length);
 						
-						try {
-							response = nfca.transceive(command);
-							Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
-							//Log.d(TAG, response);
+						encodedData = new byte[nvalue.length];
+						Log.d(TAG, "tlvEncodedData: nvalue.length");
+						Log.d(TAG, Arrays.toString(encodedData));
+						
+						System.arraycopy(nvalue, 0, encodedData, 0, nvalue.length);
+						
+						// fill up with zeros to block boundary:
+						encodedData = Arrays.copyOf(encodedData, (encodedData.length / 4 + 1) * 4);
+						Log.d(TAG, "new tlvEncodedData:");
+						Log.d(TAG, Arrays.toString(encodedData));
+						
+						//page 32 = 112
+						//112 / 4 = 28 +4 = 32 
+						
+						int j = (page - 4) * 4;
+						
+						for (int i = 0; i < encodedData.length; i += 4) {
+							byte[] command = new byte[] {
+									(byte)0xA2, // WRITE
+									(byte)((4 + j / 4) & 0x0FF), // block address
+									0, 0, 0, 0
+							};
 							
-						} catch (IOException e) {
-							Log.d(TAG, "Error:" + e.getMessage());
-							//e.printStackTrace();
-							callbackContext.error("Error writing to card: " + e.getMessage());
+							j += 4;
+							
+							Log.d(TAG, "Command:");
+							Log.d(TAG, Arrays.toString(command));
+							Log.d(TAG, "i:" + i);
+							
+							System.arraycopy(encodedData, i, command, 2, 4);
+							
+							Log.d(TAG, "New Command after copy:");
+							Log.d(TAG, Arrays.toString(command));
+							
+							try {
+								response = nfca.transceive(command);
+								Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
+								//Log.d(TAG, response);
+								
+							} catch (IOException e) {
+								Log.d(TAG, "Error:" + e.getMessage());
+								//e.printStackTrace();
+								callbackContext.error("Error writing to card: " + e.getMessage());
+							}
 						}
+					
+					}catch(JSONException e){
+						callback.error("Error writing to card: " + e.getMessage())
 					}
 				
 				}
