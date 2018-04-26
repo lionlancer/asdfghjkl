@@ -1157,6 +1157,31 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					}
 				}
 				
+				// empty the contents
+				
+				for(int page = 4; page < 130; page++){
+					byte[] command = new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)(page & 0x0FF), // block address
+							0, 0, 0, 0		// remove protection?
+					};
+					
+					
+					Log.d(TAG, "Command:");
+					Log.d(TAG, Arrays.toString(command));
+					
+					try {
+						response = nfca.transceive(command);
+						Log.d(TAG, "Response got to page " +page+ "!: " + Arrays.toString(response));
+						//Log.d(TAG, response);
+						
+					} catch (IOException e) {
+						Log.d(TAG, "Error:" + e.getMessage());
+						//e.printStackTrace();
+						callbackContext.error("Error formatting card: " + e.getMessage());
+					}
+				}
+				
 				callbackContext.success();
 		
 			}
