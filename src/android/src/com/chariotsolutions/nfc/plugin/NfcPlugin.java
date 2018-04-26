@@ -1084,6 +1084,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             @Override
             public void run() {
 				
+				byte[] response;
 				boolean readProtected = false;
 				
 				NfcA nfca = NfcA.get(tag);
