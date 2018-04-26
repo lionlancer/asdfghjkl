@@ -49,6 +49,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String WRITE_TAG = "writeTag";
     private static final String WRITE_TO_PAGE = "writeToPage";
     private static final String WRITE_TO_PAGE2 = "writeToPage2";
+    private static final String FORMAT_TAG = "formatTag";
     private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
     private static final String SHARE_TAG = "shareTag";
@@ -197,6 +198,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			writeToPage2(jdata, saveType, callbackContext);
 
+		} else if (action.equalsIgnoreCase(FORMAT_TAG)) {
+            
+			formatDTag(callbackContext);	
+			
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
 
@@ -361,6 +366,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         writeData2(data, tag, callbackContext);
     }
 	
+	private void formatDTag(CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        formatTag(tag, callbackContext);
+    }
 
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
@@ -1063,6 +1076,90 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 		});
 		
+	}
+			
+	
+	private formatTag(final Tag tag, final CallbackContext callbackContext){
+		cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+				
+				boolean readProtected = false;
+				
+				NfcA nfca = NfcA.get(tag);
+				
+				try{ nfca.connect();}
+				catch(Exception e){}
+				
+				try{
+					
+					response = null;
+					
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
+						});
+					}catch(Exception e){
+						readProtected = true;
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+					}
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
+						
+						Log.d(TAG, "tag is protected!");
+						
+						isProtected = true;
+						gNfcA = nfca;
+						gTag = tag;
+						
+						nfca = authenticate(nfca, callbackContext);
+						
+					}else {
+						Log.d(TAG, "tag is NOT protected!");
+						//isAuthOK = true;
+						isProtected = false;
+					}
+					
+				}catch(Exception e){
+					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
+				}
+		
+				if(isProtected){
+					// remove lock
+					
+					byte[] command = new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)(131 & 0x0FF), // block address
+							0, 0, 0, (byte)0xFF		// remove protection?
+					};
+					
+					
+					Log.d(TAG, "Command:");
+					Log.d(TAG, Arrays.toString(command));
+					
+					try {
+						response = nfca.transceive(command);
+						Log.d(TAG, "Response got to unlock!: " + Arrays.toString(response));
+						//Log.d(TAG, response);
+						
+					} catch (IOException e) {
+						Log.d(TAG, "Error:" + e.getMessage());
+						//e.printStackTrace();
+						callbackContext.error("Error formatting card: " + e.getMessage());
+					}
+				}
+				
+				callbackContext.success();
+		
+			}
+		});
 	}
 	
 	private String expandCharacters(String string, int maxLength) { 
