@@ -1079,7 +1079,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	}
 			
 	
-	private formatTag(final Tag tag, final CallbackContext callbackContext){
+	private void formatTag(final Tag tag, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
