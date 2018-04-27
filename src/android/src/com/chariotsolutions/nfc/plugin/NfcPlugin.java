@@ -1108,7 +1108,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca.close();
 					
 					try{ nfca.connect();}
-					catch(e){				
+					catch(Exception e){				
 						Log.d(TAG, "Error in connecting: " + e.getMessage());
 						
 						callbackContext.error("Error in connecting : " + e.getMessage());
