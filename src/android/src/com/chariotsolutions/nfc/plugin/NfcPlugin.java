@@ -1366,7 +1366,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 	}
 	
-	private NfcA formatTag1(NfcA nfca1, Tag tag, CallbackContext callbackContexyt){
+	private NfcA formatTag1(NfcA nfca1, Tag tag, CallbackContext callbackContext){
 		Log.d(TAG, "formatting tag");
 		
 		byte[] response;
