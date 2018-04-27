@@ -1103,7 +1103,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				NfcA nfca = NfcA.get(tag);
 				
 				try{ nfca.connect();}
-				catch(Exception e){}
+				catch(Exception e){
+					
+					Log.d(TAG, "Error in connecting: " + e.getMessage());
+					
+					callbackContext.error("Error in connecting : " + e.getMessage());
+					
+				}
 				
 				try{
 					// Protect tag with your password in case
@@ -1114,6 +1120,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte) 0x30, // READ
 							(byte) 0x84  // page address
 					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in reading 84h: " + e.getMessage());
+					
+					callbackContext.error("Error in reading 84h : " + e.getMessage());
+				}	
+					
+				try{
 					// configure tag as write-protected with unlimited authentication tries
 					if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
 						boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
@@ -1138,6 +1151,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte) 0x30, // READ
 							(byte) 0x83  // page address: ACCESS, RFUI, RFUI, RFUI
 					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in reading 83h: " + e.getMessage());
+					
+					callbackContext.error("Error in reading 83h : " + e.getMessage());
+				}	
+
+				try{
 					// Configure tag to protect entire storage (page 0 and above)
 					if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
 						int auth0 = 0;                                    // first page to be protected
@@ -1162,6 +1182,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
 							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in setting PACK: " + e.getMessage());
+					
+					callbackContext.error("Error in setting PACK: " + e.getMessage());
+				}	
+					
+				try{	
 					// set PWD:
 					nfca.transceive(new byte[] {
 							(byte)0xA2,
@@ -1172,12 +1199,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.success();
 				
 				}catch(Exception e){
-					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+					Log.d(TAG, "Error in setting PWD: " + e.getMessage());
 					
-					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
+					callbackContext.error("Error in Setting PWD: " + e.getMessage());
 				}
-				
-				
 				
 			}
 			
