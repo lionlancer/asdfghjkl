@@ -1530,13 +1530,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		byte[] tpwd;
 		
-		if(passcode != ""){
-			byte[] bpwd = passcode.getBytes();
+		//if(passcode != ""){
+		//	byte[] bpwd = passcode.getBytes();
 			
-			tpwd = bpwd;
-		}else {
+		//	tpwd = bpwd;
+		//}else {
 			tpwd = pwd;
-		}
+		//}
 		
 		boolean error = false;
 		String message = "";
