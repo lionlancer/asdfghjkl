@@ -1100,40 +1100,85 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             public void run() {
 				
 				byte[] response;
-				
 				NfcA nfca = NfcA.get(tag);
 				
 				try{ nfca.connect();}
 				catch(Exception e){}
 				
 				try{
+					// Protect tag with your password in case
+					// it's not protected yet
+
+					// Get Page 84h
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x84  // page address
+					});
+					// configure tag as write-protected with unlimited authentication tries
+					if ((response != null) && (response.length >= 16)) {    // read always returns 4 pages
+						boolean prot = false;                               // false = PWD_AUTH for write only, true = PWD_AUTH for read and write
+						int authlim = 0;                                    // 0 = unlimited tries
+						nfca.transceive(new byte[] {
+								(byte) 0xA2, // WRITE
+								(byte) 0x84, // page address: MIRROR, RFUI, MIRROR_PAGE, AUTH0
+								(byte) ((response[0] & 0x078) | (prot ? 0x080 : 0x000) | (authlim & 0x007)),    // set ACCESS byte according to our settings
+								0, 0, 0                                                                         // fill rest as zeros as stated in datasheet (RFUI must be set as 0b)
+						});
+					}
+				
+				}catch(Exception e){
+					Log.d(TAG, "Error in configure tag as write-protected: " + e.getMessage());
+					
+					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
+				}
+				
+				try{
+					// Get page 83h
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x83  // page address: ACCESS, RFUI, RFUI, RFUI
+					});
+					// Configure tag to protect entire storage (page 0 and above)
+					if ((response != null) && (response.length >= 16)) {  // read always returns 4 pages
+						int auth0 = 0;                                    // first page to be protected
+						nfca.transceive(new byte[] {
+								(byte) 0xA2, // WRITE
+								(byte) 0x83, // page address
+								response[0], 0, response[2],              // Keep old mirror values and write 0 in RFUI byte as stated in datasheet
+								(byte) (auth0 & 0x0ff)
+						});
+					}
+				}catch(Exception e){
+					Log.d(TAG, "Error in protecting entire storage: " + e.getMessage());
+					
+					callbackContext.error("Error in protecting entire storage: " + e.getMessage());
+				}
+				
+				try{
 					// Send PACK and PWD
 					// set PACK:
 					nfca.transceive(new byte[] {
 							(byte)0xA2,
-							(byte)0x86,
+							(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
 							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 					});
 					// set PWD:
 					nfca.transceive(new byte[] {
 							(byte)0xA2,
-							(byte)0x85,
-							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+							(byte)0x85,	// page address: PWD (4bytes)
+							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 133
 					});
-					
-					nfca.transceive(new byte[] {
-							(byte)0xA2, // WRITE
-							(byte)3,    // block address
-							//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
-							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
-					});
+				
+					callbackContext.success();
+				
 				}catch(Exception e){
 					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
 					
 					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
 				}
 				
-				callbackContext.success();
+				
+				
 			}
 			
 		});
