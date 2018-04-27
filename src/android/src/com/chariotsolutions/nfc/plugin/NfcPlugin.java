@@ -1108,7 +1108,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					nfca.close();
 					
 					try{ nfca.connect();}
-					catch(Exception e){				
+					catch(e){				
 						Log.d(TAG, "Error in connecting: " + e.getMessage());
 						
 						callbackContext.error("Error in connecting : " + e.getMessage());
@@ -1989,12 +1989,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			nfca.setTimeout(900);
 			
+			int start = 0;
+			int last = 0;
+			
 			try{
 			
-				int start = 4;
+				start = 4;
 				//lastpage = 129
 				// (129 - 4) * 4 = 500
-				int last = 248;
+				last = 248;
 				//int last = (9 - 4 ) * 4;
 				
 				
