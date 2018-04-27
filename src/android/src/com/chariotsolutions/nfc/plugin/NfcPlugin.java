@@ -503,7 +503,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca, callbackContext);
+						//nfca = authenticate(nfca, "");
+						JSONObject result = authenticate(nfca, "");
+						
+						nfca = result.nfca;
 						// open access
 						//nfca = enableProtection(nfca, false);
 						
@@ -764,7 +767,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca, callbackContext);
+						//nfca = authenticate(nfca, "");
+						JSONObject result = authenticate(nfca, "");
+						
+						nfca = result.nfca;
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -938,7 +944,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca, callbackContext);
+						//nfca = authenticate(nfca, "");
+						JSONObject result = authenticate(nfca, "");
+						
+						nfca = result.nfca;
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -1261,8 +1270,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             @Override
             public void run() {
 				
+				if(passcode == null) passcode = "";
+				
 				byte[] response;
 				boolean readProtected = false;
+				boolean proceed = false;
 				
 				NfcA nfca = NfcA.get(tag);
 				
@@ -1296,7 +1308,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca, callbackContext);
+						JSONObject result = authenticate(nfca, passcode);
+						
+						nfca = result.nfca;
+						
+						if(!result.error){ 
+							proceed = true; 
+						}else{
+							callbackContext.error("Error formatting card: " + result.message);
+						}
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -1308,58 +1328,62 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
 					//callbackContext.error("Unlocking Error: " + e.getMessage());
 				}
-		
-				if(isProtected){
-					// remove lock
-					
-					byte[] command = new byte[] {
-							(byte)0xA2, // WRITE
-							(byte)(131 & 0x0FF), // block address
-							0, 0, 0, (byte)0xFF		// remove protection?
-					};
-					
-					
-					Log.d(TAG, "Command:");
-					Log.d(TAG, Arrays.toString(command));
-					
-					try {
-						response = nfca.transceive(command);
-						Log.d(TAG, "Response got to unlock!: " + Arrays.toString(response));
-						//Log.d(TAG, response);
+				
+				if(proceed){
+				
+					if(isProtected){
+						// remove lock
 						
-					} catch (IOException e) {
-						Log.d(TAG, "Error:" + e.getMessage());
-						//e.printStackTrace();
-						callbackContext.error("Error formatting card: " + e.getMessage());
-					}
-				}
-				
-				// empty the contents
-				
-				for(int page = 4; page < 130; page++){
-					byte[] command = new byte[] {
-							(byte)0xA2, // WRITE
-							(byte)(page & 0x0FF), // block address
-							0, 0, 0, 0		// remove protection?
-					};
-					
-					
-					Log.d(TAG, "Command:");
-					Log.d(TAG, Arrays.toString(command));
-					
-					try {
-						response = nfca.transceive(command);
-						Log.d(TAG, "Response got to page " +page+ "!: " + Arrays.toString(response));
-						//Log.d(TAG, response);
+						byte[] command = new byte[] {
+								(byte)0xA2, // WRITE
+								(byte)(131 & 0x0FF), // block address
+								0, 0, 0, (byte)0xFF		// remove protection?
+						};
 						
-					} catch (IOException e) {
-						Log.d(TAG, "Error:" + e.getMessage());
-						//e.printStackTrace();
-						callbackContext.error("Error formatting card: " + e.getMessage());
+						
+						Log.d(TAG, "Command:");
+						Log.d(TAG, Arrays.toString(command));
+						
+						try {
+							response = nfca.transceive(command);
+							Log.d(TAG, "Response got to unlock!: " + Arrays.toString(response));
+							//Log.d(TAG, response);
+							
+						} catch (IOException e) {
+							Log.d(TAG, "Error:" + e.getMessage());
+							//e.printStackTrace();
+							callbackContext.error("Error formatting card: " + e.getMessage());
+						}
 					}
+					
+					// empty the contents
+					
+					for(int page = 4; page < 130; page++){
+						byte[] command = new byte[] {
+								(byte)0xA2, // WRITE
+								(byte)(page & 0x0FF), // block address
+								0, 0, 0, 0		// remove protection?
+						};
+						
+						
+						Log.d(TAG, "Command:");
+						Log.d(TAG, Arrays.toString(command));
+						
+						try {
+							response = nfca.transceive(command);
+							Log.d(TAG, "Response got to page " +page+ "!: " + Arrays.toString(response));
+							//Log.d(TAG, response);
+							
+						} catch (IOException e) {
+							Log.d(TAG, "Error:" + e.getMessage());
+							//e.printStackTrace();
+							callbackContext.error("Error formatting card: " + e.getMessage());
+						}
+					}
+					
+					
+					callbackContext.success();
 				}
-				
-				callbackContext.success();
 				
 				
 			}
@@ -1408,7 +1432,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				gNfcA = nfca;
 				gTag = tag;
 				
-				nfca = authenticate(nfca, callbackContext);
+				//nfca = authenticate(nfca, "");
+				JSONObject result = authenticate(nfca, "");
+				nfca = result.nfca;
 				
 			}else {
 				Log.d(TAG, "tag is NOT protected!");
@@ -1483,12 +1509,25 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		return new String(asChars); 
 	}
 	
-	private NfcA authenticate(NfcA nfca, CallbackContext callbackContext){
+	private JSONObject authenticate(NfcA nfca, String passcode){
+		
+		byte[] tpwd;
+		
+		if(passcode != ""){
+			byte[] bpwd = passcode.getBytes();
+			
+			tpwd = bpwd;
+		}else {
+			tpwd = pwd;
+		}
+		
+		boolean error = false;
+		String message = "";
 		
 		try {
 			byte[] response = nfca.transceive(new byte[]{
 					(byte) 0x1B, // PWD_AUTH
-					pwd[0], pwd[1], pwd[2], pwd[3]
+					tpwd[0], tpwd[1], tpwd[2], tpwd[3]
 			});
 			
 			// Check if PACK is matching expected PACK
@@ -1499,19 +1538,32 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] packResponse = Arrays.copyOf(response, 2);
 				if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
 					Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-					callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
+					//callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
 					//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+					
+					error = true;
+					message = "Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString();
+					
 				}else{
 					Log.d(TAG, "Tag authenticated!");
+					//message = "Tag authenticated!";
 				}
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Authentication Error: " + e.getMessage());
-			callbackContext.error("Authentication Error: " + e.getMessage());
+			//callbackContext.error("Authentication Error: " + e.getMessage());
 			//e.printStackTrace();
+			
+			error = true;
+			message = "Authentication Error: " + e.getMessage();
 		}
 		
-		return nfca;
+		JSONObject ret = new JSONObject();
+		ret.put("error", error);
+		ret.put("message", message);
+		ret.put("nfca", nfca);
+		
+		return ret;
 	}
 	
 	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
@@ -1950,7 +2002,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						nfca = authenticate(nfca, callbackContext);
+						//nfca = authenticate(nfca, "");
+						JSONObject result = authenticate(nfca, "");
+						
+						nfca = result.nfca;
 						// open access
 						//nfca = enableProtection(nfca, false);
 						
