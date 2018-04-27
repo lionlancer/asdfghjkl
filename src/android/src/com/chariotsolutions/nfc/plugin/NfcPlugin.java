@@ -505,8 +505,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						//nfca = authenticate(nfca, "");
 						JSONObject result = authenticate(nfca, "");
-						
-						nfca = result.getNfcA("nfca");
+						ObjectMapper om = new ObjectMapper();
+						JsonNode node = om.readTree(result);
+						nfca = node.findValues("nfca");
+						//nfca = result.getNfcA("nfca");
 						// open access
 						//nfca = enableProtection(nfca, false);
 						
@@ -770,7 +772,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//nfca = authenticate(nfca, "");
 						JSONObject result = authenticate(nfca, "");
 						
-						nfca = result.getNfcA("nfca");
+						ObjectMapper om = new ObjectMapper();
+						JsonNode node = om.readTree(result);
+						nfca = node.findValues("nfca");
+						//nfca = result.getNfcA("nfca");
+						
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -947,7 +953,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//nfca = authenticate(nfca, "");
 						JSONObject result = authenticate(nfca, "");
 						
-						nfca = result.getNfcA("nfca");
+						ObjectMapper om = new ObjectMapper();
+						JsonNode node = om.readTree(result);
+						nfca = node.findValues("nfca");
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -1309,13 +1317,18 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gTag = tag;
 						
 						JSONObject result = authenticate(nfca, passcode);
+						ObjectMapper om = new ObjectMapper();
+						JsonNode node = om.readTree(result);
+						nfca = node.findValues("nfca");
+						//nfca = result.getNfcA("nfca");
 						
-						nfca = result.getNfcA("nfca");
+						boolean error = node.findValues("error");
+						String message = node.findValues("message");
 						
-						if(!result.error){ 
+						if(!error){ 
 							proceed = true; 
 						}else{
-							callbackContext.error("Error formatting card: " + result.message);
+							callbackContext.error("Error formatting card: " + message);
 						}
 						
 					}else {
@@ -1434,7 +1447,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				//nfca = authenticate(nfca, "");
 				JSONObject result = authenticate(nfca, "");
-				nfca = result.getNfcA("nfca");
+				ObjectMapper om = new ObjectMapper();
+				JsonNode node = om.readTree(result);
+				nfca = node.findValues("nfca");
+				//nfca = result.getNfcA("nfca");
 				
 			}else {
 				Log.d(TAG, "tag is NOT protected!");
@@ -2004,8 +2020,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						//nfca = authenticate(nfca, "");
 						JSONObject result = authenticate(nfca, "");
-						
-						nfca = result.getNfcA("nfca");
+						ObjectMapper om = new ObjectMapper();
+						JsonNode node = om.readTree(result);
+						nfca = node.findValues("nfca");
+						//nfca = result.getNfcA("nfca");
 						// open access
 						//nfca = enableProtection(nfca, false);
 						
