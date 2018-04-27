@@ -458,12 +458,14 @@ var nfc = {
         cordova.exec(win, fail, "NfcPlugin", "writeToPage", [value, page, saveType]);
     },
 	
-	writeToPage2: function (data, saveType, win, fail) {
-        cordova.exec(win, fail, "NfcPlugin", "writeToPage2", [data, saveType]);
+	writeToPage2: function (data, saveType, format, win, fail) {
+		if(format == null) format = false;
+        cordova.exec(win, fail, "NfcPlugin", "writeToPage2", [data, saveType, format]);
     },
 
-	format: function (win, fail) {
-        cordova.exec(win, fail, "NfcPlugin", "formatTag", []);
+	format: function (passcode, win, fail) {
+		if(passcode == null) passcode = "";
+        cordova.exec(win, fail, "NfcPlugin", "formatTag", [passcode]);
     },
 	
 	applyPassword: function (win, fail) {
