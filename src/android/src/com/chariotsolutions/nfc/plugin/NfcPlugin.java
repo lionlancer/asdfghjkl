@@ -61,6 +61,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String SHOW_SETTINGS = "showSettings";
 	private static final String SETPASSWORD = "setPassword";
 	private static final String GETPASSWORD = "getPassword";
+	private static final String APPLYPASSWORD = "applyPassword";
 	
     private static final String NDEF = "ndef";
     private static final String NDEF_MIME = "ndef-mime";
@@ -201,7 +202,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		} else if (action.equalsIgnoreCase(FORMAT_TAG)) {
             
 			formatDTag(callbackContext);	
-			
+		
+		} else if (action.equalsIgnoreCase(APPLYPASSWORD)) {
+            
+			applyDPassword(callbackContext);	
+		
+		
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
 
@@ -373,6 +379,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         formatTag(tag, callbackContext);
+    }
+	
+	private void applyDPassword(CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        applyPassword(tag, callbackContext);
     }
 
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
@@ -1077,7 +1092,52 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 		
 	}
+	
+	
+	private void applyPassword(final Tag tag, final CallbackContext callbackContext){
+		cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+				
+				byte[] response;
+				
+				NfcA nfca = NfcA.get(tag);
+				
+				try{ nfca.connect();}
+				catch(Exception e){}
+				
+				try{
+					// Send PACK and PWD
+					// set PACK:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x86,
+							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+					});
+					// set PWD:
+					nfca.transceive(new byte[] {
+							(byte)0xA2,
+							(byte)0x85,
+							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+					});
+					
+					nfca.transceive(new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)3,    // block address
+							//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
+							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
+					});
+				}catch(Exception e){
+					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+					
+					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
+				}
+				
+				callbackContext.success();
+			}
 			
+		});
+	}
 	
 	private void formatTag(final Tag tag, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
