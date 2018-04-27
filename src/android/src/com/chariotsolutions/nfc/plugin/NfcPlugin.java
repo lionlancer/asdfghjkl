@@ -373,7 +373,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		gSaveType = saveType;
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        writeData2(data, tag, format, callbackContext);
+        writeData2(data, format, tag, callbackContext);
     }
 	
 	private void formatDTag(String passcode, CallbackContext callbackContext) throws JSONException {
@@ -1372,8 +1372,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		byte[] response;
 		boolean readProtected = false;
 		
-		if(!nfca1){
-			NfcA nfca = NfcA.get(tag);
+		NfcA nfca;
+		
+		if(nfca1 == null){
+			nfca = NfcA.get(tag);
 		}else nfca = nfca1;				
 		
 		try{ nfca.connect();}
