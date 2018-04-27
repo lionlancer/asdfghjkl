@@ -1105,10 +1105,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				try{ nfca.connect();}
 				catch(Exception e){
 					
-					Log.d(TAG, "Error in connecting: " + e.getMessage());
+					nfca.close();
 					
-					callbackContext.error("Error in connecting : " + e.getMessage());
-					
+					try{ nfca.connect();}
+					catch(Exception e){				
+						Log.d(TAG, "Error in connecting: " + e.getMessage());
+						
+						callbackContext.error("Error in connecting : " + e.getMessage());
+					}
 				}
 				
 				try{
@@ -1382,7 +1386,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 			}
 		}catch(Exception e){
-			Log.d(TAG, "Tranceive Exception Error: " + e.getMessage());
+			Log.d(TAG, "Authentication Error: " + e.getMessage());
 			callbackContext.error("Authentication Error: " + e.getMessage());
 			//e.printStackTrace();
 		}
@@ -1981,108 +1985,127 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				//nfca.close();
 			}
 			
-			nfca = authenticate(nfca, callbackContext);
+			//nfca = authenticate(nfca, callbackContext);
 			
 			nfca.setTimeout(900);
 			
-			int start = 4;
-			//lastpage = 129
-			// (129 - 4) * 4 = 500
-			int last = 248;
-			//int last = (9 - 4 ) * 4;
+			try{
 			
+				int start = 4;
+				//lastpage = 129
+				// (129 - 4) * 4 = 500
+				int last = 248;
+				//int last = (9 - 4 ) * 4;
+				
+				
+				byte[] response = nfca.transceive(new byte[] {
+						(byte) 0x3A, // FAST_READ
+						//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+						//(byte) (4 & 0x0FF),  // first page address
+						(byte) 0x04,  // first page address
+						(byte) ((4 + last / 4) & 0x0FF)  // last page address
+						//(byte) (81 & 0x0FF)  // last page address
+						//(byte) 0x81  // last page address
+				});
 			
-			byte[] response = nfca.transceive(new byte[] {
-					(byte) 0x3A, // FAST_READ
-					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
-					//(byte) (4 & 0x0FF),  // first page address
-					(byte) 0x04,  // first page address
-					(byte) ((4 + last / 4) & 0x0FF)  // last page address
-					//(byte) (81 & 0x0FF)  // last page address
-					//(byte) 0x81  // last page address
-			});
-		
+				
+				Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+				
+				
+				//str = new String(response, "UTF-16");
+				//Log.d(TAG, "response to UTF-16 String: " + str);			
+				
+				//str = new String(response, "US-ASCII");
+				//Log.d(TAG, "response to US-ASCII String: " + str);
+				
+				//str = new String(response, "ISO-8859-1");
+				//Log.d(TAG, "response to ISO-8859-1 String: " + str);
+				
+				str = new String(response, "UTF-8");
+				//str = StringEscapeUtils.escapeJava(str);
+				Log.d(TAG, "response to UTF-8 String: " + str);
+				//Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
+				
+				
+				
+				//String[] msgs = str.split("∩┐╜");
+				
+				//Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+				
+				
+				
+				//String msg = msgs[1];
+				//Log.d(TAG, "Correct msg: " + msg);
+				
+				//fireNfcAEvent("NfcA", str);
+			}catch(Exception e){
+				Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
+				
+				if(callbackContext != null){
+					callbackContext.error("Error reading card: " + e.getMessage());
+				}
+			}
 			
-			Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+			try{
 			
+				start = 252;
+				//lastpage = 129
+				// (129 - 4) * 4 = 500
+				last = 490;
+				//int last = (9 - 4 ) * 4;
+				
+				
+				
+				byte[] response2 = nfca.transceive(new byte[] {
+						(byte) 0x3A, // FAST_READ
+						//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+						//(byte) (4 & 0x0FF),  // first page address
+						(byte) ((4 + start / 4) & 0x0FF),  // first page address
+						(byte) ((4 + last / 4) & 0x0FF)  // last page address
+						//(byte) (81 & 0x0FF)  // last page address
+						//(byte) 0x81  // last page address
+				});
 			
-			//str = new String(response, "UTF-16");
-			//Log.d(TAG, "response to UTF-16 String: " + str);			
+				
+				Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response2));
+				
+				
+				//str2 = new String(response2, "UTF-16");
+				//Log.d(TAG, "2ND response to UTF-16 String: " + str);			
+				
+				//str2 = new String(response2, "US-ASCII");
+				//Log.d(TAG, "2nD response to US-ASCII String: " + str);
+				
+				//str2 = new String(response2, "ISO-8859-1");
+				//Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
+				
+				str2 = new String(response2, "UTF-8");
+				//str2 = StringEscapeUtils.escapeJava(str);
+				Log.d(TAG, "2nD response to UTF-8 String: " + str2);
+				//Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
+				
+				
+				// combine both readings
+				String rData = str + str2;
+				Log.d(TAG, "Returned String: " + rData);
+				
+				//String[] data = rData.split("\\|\\|", 0);
+				//Log.d(TAG, "Returned Data: " + data);
+				
+				//str = data.toString();
+				str = cleanData(rData);
+				Log.d(TAG, "Cleaned Data: " + str);
+				
+				nfca.close();
+				
+			}catch(Exception e){
+				Log.d(TAG, "FAST_READ 2 Exception Error: " + e.getMessage());
+				
+				if(callbackContext != null){
+					callbackContext.error("Error reading card: " + e.getMessage());
+				}
+			}
 			
-			//str = new String(response, "US-ASCII");
-			//Log.d(TAG, "response to US-ASCII String: " + str);
-			
-			//str = new String(response, "ISO-8859-1");
-			//Log.d(TAG, "response to ISO-8859-1 String: " + str);
-			
-			str = new String(response, "UTF-8");
-			//str = StringEscapeUtils.escapeJava(str);
-			Log.d(TAG, "response to UTF-8 String: " + str);
-			//Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
-			
-			
-			
-			//String[] msgs = str.split("∩┐╜");
-			
-			//Log.d(TAG, "msgs: " + Arrays.toString(msgs));
-			
-			
-			
-			//String msg = msgs[1];
-			//Log.d(TAG, "Correct msg: " + msg);
-			
-			//fireNfcAEvent("NfcA", str);
-			
-			
-			start = 252;
-			//lastpage = 129
-			// (129 - 4) * 4 = 500
-			last = 490;
-			//int last = (9 - 4 ) * 4;
-			
-			
-			
-			byte[] response2 = nfca.transceive(new byte[] {
-					(byte) 0x3A, // FAST_READ
-					//(byte) ((4 + start / 4) & 0x0FF),  // first page address
-					//(byte) (4 & 0x0FF),  // first page address
-					(byte) ((4 + start / 4) & 0x0FF),  // first page address
-					(byte) ((4 + last / 4) & 0x0FF)  // last page address
-					//(byte) (81 & 0x0FF)  // last page address
-					//(byte) 0x81  // last page address
-			});
-		
-			
-			Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response2));
-			
-			
-			//str2 = new String(response2, "UTF-16");
-			//Log.d(TAG, "2ND response to UTF-16 String: " + str);			
-			
-			//str2 = new String(response2, "US-ASCII");
-			//Log.d(TAG, "2nD response to US-ASCII String: " + str);
-			
-			//str2 = new String(response2, "ISO-8859-1");
-			//Log.d(TAG, "2nD response to ISO-8859-1 String: " + str);
-			
-			str2 = new String(response2, "UTF-8");
-			//str2 = StringEscapeUtils.escapeJava(str);
-			Log.d(TAG, "2nD response to UTF-8 String: " + str2);
-			//Log.d(TAG, "2ND response to UTF-8 String (escaped): " + escapeStr(str2));
-			
-			
-			// combine both readings
-			String rData = str + str2;
-			Log.d(TAG, "Returned String: " + rData);
-			
-			//String[] data = rData.split("\\|\\|", 0);
-			//Log.d(TAG, "Returned Data: " + data);
-			
-			//str = data.toString();
-			str = cleanData(rData);
-			Log.d(TAG, "Cleaned Data: " + str);
-			
-			nfca.close();
 		}catch(Exception e){
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 			
