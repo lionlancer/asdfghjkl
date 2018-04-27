@@ -1187,7 +1187,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					});
 					
 					Log.d(TAG, "Page 86h (PACK) response: " + Arrays.toString(response));
-				}catch(e){
+				}catch(Exception e){
 					Log.d(TAG, "Error in reading PACK: " + e.getMessage());
 					
 					callbackContext.error("Error in Reading PACK: " + e.getMessage());
@@ -1216,7 +1216,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					});
 					
 					Log.d(TAG, "Page 85h (PWD) response: " + Arrays.toString(response));
-				}catch(e){
+				}catch(Exception e){
 					Log.d(TAG, "Error in reading PWD: " + e.getMessage());
 					
 					callbackContext.error("Error in Reading PWD: " + e.getMessage());
