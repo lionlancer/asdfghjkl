@@ -503,11 +503,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						//nfca = authenticate(nfca, "");
-						JSONObject result = authenticate(nfca, "");
-						ObjectMapper om = new ObjectMapper();
-						JsonNode node = om.readTree(result);
-						nfca = node.findValues("nfca");
+						nfca = authenticate(nfca, "", callbackContext);
+						//JSONObject result = authenticate(nfca, "");
+						//ObjectMapper om = new ObjectMapper();
+						//JsonNode node = om.readTree(result);
+						//nfca = node.findValues("nfca");
 						//nfca = result.getNfcA("nfca");
 						// open access
 						//nfca = enableProtection(nfca, false);
@@ -769,12 +769,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						//nfca = authenticate(nfca, "");
-						JSONObject result = authenticate(nfca, "");
+						nfca = authenticate(nfca, "", callbackContext);
+						//JSONObject result = authenticate(nfca, "");
 						
-						ObjectMapper om = new ObjectMapper();
-						JsonNode node = om.readTree(result);
-						nfca = node.findValues("nfca");
+						//ObjectMapper om = new ObjectMapper();
+						//JsonNode node = om.readTree(result);
+						//nfca = node.findValues("nfca");
 						//nfca = result.getNfcA("nfca");
 						
 						
@@ -950,12 +950,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						//nfca = authenticate(nfca, "");
-						JSONObject result = authenticate(nfca, "");
+						nfca = authenticate(nfca, "", callbackContext);
+						//JSONObject result = authenticate(nfca, "");
 						
-						ObjectMapper om = new ObjectMapper();
-						JsonNode node = om.readTree(result);
-						nfca = node.findValues("nfca");
+						//ObjectMapper om = new ObjectMapper();
+						//JsonNode node = om.readTree(result);
+						//nfca = node.findValues("nfca");
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -1316,20 +1316,21 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						JSONObject result = authenticate(nfca, passcode);
-						ObjectMapper om = new ObjectMapper();
-						JsonNode node = om.readTree(result);
-						nfca = node.findValues("nfca");
+						nfca = authenticate(nfca, passcode, callbackContext);
+						//JSONObject result = authenticate(nfca, passcode);
+						//ObjectMapper om = new ObjectMapper();
+						//JsonNode node = om.readTree(result);
+						//nfca = node.findValues("nfca");
 						//nfca = result.getNfcA("nfca");
 						
-						boolean error = node.findValues("error");
-						String message = node.findValues("message");
+						//boolean error = node.findValues("error");
+						//String message = node.findValues("message");
 						
-						if(!error){ 
-							proceed = true; 
-						}else{
-							callbackContext.error("Error formatting card: " + message);
-						}
+						//if(!error){ 
+						//	proceed = true; 
+						//}else{
+						//	callbackContext.error("Error formatting card: " + message);
+						//}
 						
 					}else {
 						Log.d(TAG, "tag is NOT protected!");
@@ -1342,7 +1343,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//callbackContext.error("Unlocking Error: " + e.getMessage());
 				}
 				
-				if(proceed){
+				//if(proceed){
 				
 					if(isProtected){
 						// remove lock
@@ -1396,7 +1397,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					
 					callbackContext.success();
-				}
+				//}
 				
 				
 			}
@@ -1445,11 +1446,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				gNfcA = nfca;
 				gTag = tag;
 				
-				//nfca = authenticate(nfca, "");
-				JSONObject result = authenticate(nfca, "");
-				ObjectMapper om = new ObjectMapper();
-				JsonNode node = om.readTree(result);
-				nfca = node.findValues("nfca");
+				nfca = authenticate(nfca, "", callbackContext);
+				//JSONObject result = authenticate(nfca, "");
+				//ObjectMapper om = new ObjectMapper();
+				//JsonNode node = om.readTree(result);
+				//nfca = node.findValues("nfca");
 				//nfca = result.getNfcA("nfca");
 				
 			}else {
@@ -1525,7 +1526,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		return new String(asChars); 
 	}
 	
-	private JSONObject authenticate(NfcA nfca, String passcode){
+	private JSONObject authenticate(NfcA nfca, String passcode, CallbackContext callbackContext){
 		
 		byte[] tpwd;
 		
@@ -1554,7 +1555,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				byte[] packResponse = Arrays.copyOf(response, 2);
 				if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
 					Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
-					//callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
+					callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
 					//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
 					
 					error = true;
@@ -1567,19 +1568,20 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Authentication Error: " + e.getMessage());
-			//callbackContext.error("Authentication Error: " + e.getMessage());
+			callbackContext.error("Authentication Error: " + e.getMessage());
 			//e.printStackTrace();
 			
 			error = true;
 			message = "Authentication Error: " + e.getMessage();
 		}
 		
-		JSONObject ret = new JSONObject();
-		ret.put("error", error);
-		ret.put("message", message);
-		ret.put("nfca", nfca);
+		//JSONObject ret = new JSONObject();
+		//ret.put("error", error);
+		//ret.put("message", message);
+		//ret.put("nfca", nfca);
 		
-		return ret;
+		//return ret;
+		return nfca;
 	}
 	
 	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
@@ -2018,11 +2020,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						//nfca = authenticate(nfca, "");
-						JSONObject result = authenticate(nfca, "");
-						ObjectMapper om = new ObjectMapper();
-						JsonNode node = om.readTree(result);
-						nfca = node.findValues("nfca");
+						nfca = authenticate(nfca, "", callbackContext);
+						//JSONObject result = authenticate(nfca, "");
+						//ObjectMapper om = new ObjectMapper();
+						//JsonNode node = om.readTree(result);
+						//nfca = node.findValues("nfca");
 						//nfca = result.getNfcA("nfca");
 						// open access
 						//nfca = enableProtection(nfca, false);
