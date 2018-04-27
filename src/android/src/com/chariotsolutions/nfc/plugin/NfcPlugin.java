@@ -1120,6 +1120,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte) 0x30, // READ
 							(byte) 0x84  // page address
 					});
+					
+					Log.d(TAG, "Page 84h response: " + Arrays.toString(response));
+					
 				}catch(Exception e){
 					Log.d(TAG, "Error in reading 84h: " + e.getMessage());
 					
@@ -1151,6 +1154,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte) 0x30, // READ
 							(byte) 0x83  // page address: ACCESS, RFUI, RFUI, RFUI
 					});
+					
+					Log.d(TAG, "Page 83h response: " + Arrays.toString(response));
 				}catch(Exception e){
 					Log.d(TAG, "Error in reading 83h: " + e.getMessage());
 					
@@ -1175,6 +1180,20 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				try{
+					// Get PACK
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x86  // page address:  PACK (2bytes), RFUI, RFUI
+					});
+					
+					Log.d(TAG, "Page 86h (PACK) response: " + Arrays.toString(response));
+				}catch(e){
+					Log.d(TAG, "Error in reading PACK: " + e.getMessage());
+					
+					callbackContext.error("Error in Reading PACK: " + e.getMessage());
+				}
+				
+				try{
 					// Send PACK and PWD
 					// set PACK:
 					nfca.transceive(new byte[] {
@@ -1182,11 +1201,26 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
 							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 					});
+					
 				}catch(Exception e){
 					Log.d(TAG, "Error in setting PACK: " + e.getMessage());
 					
 					callbackContext.error("Error in setting PACK: " + e.getMessage());
 				}	
+				
+				try{
+					// Get PWD
+					response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							(byte) 0x85  // page address: PWD(4bytes)
+					});
+					
+					Log.d(TAG, "Page 85h (PWD) response: " + Arrays.toString(response));
+				}catch(e){
+					Log.d(TAG, "Error in reading PWD: " + e.getMessage());
+					
+					callbackContext.error("Error in Reading PWD: " + e.getMessage());
+				}				
 					
 				try{	
 					// set PWD:
