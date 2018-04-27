@@ -1278,7 +1278,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             @Override
             public void run() {
 				
-				if(passcode == null) passcode = "";
+				//if(passcode == null) passcode = "";
 				
 				byte[] response;
 				boolean readProtected = false;
@@ -1526,7 +1526,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		return new String(asChars); 
 	}
 	
-	private JSONObject authenticate(NfcA nfca, String passcode, CallbackContext callbackContext){
+	private NfcA authenticate(NfcA nfca, String passcode, CallbackContext callbackContext){
 		
 		byte[] tpwd;
 		
