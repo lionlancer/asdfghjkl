@@ -2192,7 +2192,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				start = 4;
 				//lastpage = 129
 				// (129 - 4) * 4 = 500
-				last = 248;
+				last = 124;
 				//int last = (9 - 4 ) * 4;
 				
 				
@@ -2207,7 +2207,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				});
 			
 				
-				Log.d(TAG, "FAST_READ response: " + Arrays.toString(response));
+				Log.d(TAG, "FAST_READ1 response: " + Arrays.toString(response));
 				
 				
 				//str = new String(response, "UTF-16");
@@ -2237,7 +2237,64 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				//fireNfcAEvent("NfcA", str);
 			}catch(Exception e){
-				Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
+				Log.d(TAG, "FAST_READ1 Exception Error: " + e.getMessage());
+				
+				if(callbackContext != null){
+					callbackContext.error("Error reading card: " + e.getMessage());
+				}
+			}
+			
+			try{
+			
+				start = 125;
+				//lastpage = 129
+				// (129 - 4) * 4 = 500
+				last = 248;
+				//int last = (9 - 4 ) * 4;
+				
+				
+				byte[] response = nfca.transceive(new byte[] {
+						(byte) 0x3A, // FAST_READ
+						//(byte) ((4 + start / 4) & 0x0FF),  // first page address
+						//(byte) (4 & 0x0FF),  // first page address
+						(byte) 0x04,  // first page address
+						(byte) ((4 + last / 4) & 0x0FF)  // last page address
+						//(byte) (81 & 0x0FF)  // last page address
+						//(byte) 0x81  // last page address
+				});
+			
+				
+				Log.d(TAG, "FAST_READ2 response: " + Arrays.toString(response));
+				
+				
+				//str = new String(response, "UTF-16");
+				//Log.d(TAG, "response to UTF-16 String: " + str);			
+				
+				//str = new String(response, "US-ASCII");
+				//Log.d(TAG, "response to US-ASCII String: " + str);
+				
+				//str = new String(response, "ISO-8859-1");
+				//Log.d(TAG, "response to ISO-8859-1 String: " + str);
+				
+				str = new String(response, "UTF-8");
+				//str = StringEscapeUtils.escapeJava(str);
+				Log.d(TAG, "response to UTF-8 String: " + str);
+				//Log.d(TAG, "response to UTF-8 String (escaped): " + escapeStr(str));
+				
+				
+				
+				//String[] msgs = str.split("∩┐╜");
+				
+				//Log.d(TAG, "msgs: " + Arrays.toString(msgs));
+				
+				
+				
+				//String msg = msgs[1];
+				//Log.d(TAG, "Correct msg: " + msg);
+				
+				//fireNfcAEvent("NfcA", str);
+			}catch(Exception e){
+				Log.d(TAG, "FAST_READ2 Exception Error: " + e.getMessage());
 				
 				if(callbackContext != null){
 					callbackContext.error("Error reading card: " + e.getMessage());
@@ -2265,7 +2322,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				});
 			
 				
-				Log.d(TAG, "2ND FAST_READ response: " + Arrays.toString(response2));
+				Log.d(TAG, "2ND FAST_READ3 response: " + Arrays.toString(response2));
 				
 				
 				//str2 = new String(response2, "UTF-16");
@@ -2297,7 +2354,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				nfca.close();
 				
 			}catch(Exception e){
-				Log.d(TAG, "FAST_READ 2 Exception Error: " + e.getMessage());
+				Log.d(TAG, "FAST_READ3 Exception Error: " + e.getMessage());
 				
 				if(callbackContext != null){
 					callbackContext.error("Error reading card: " + e.getMessage());
