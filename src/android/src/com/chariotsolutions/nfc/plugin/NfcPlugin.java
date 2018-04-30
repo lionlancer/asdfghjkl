@@ -1606,8 +1606,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			tpwd = bpwd;
 			
-			console.log("User PWD bytes: " + Arrays.toString(bpwd));
-			console.log("Default PWD bytes: " + Arrays.toString(pwd));
+			Log.d(TAG, "User PWD bytes: " + Arrays.toString(bpwd));
+			Log.d(TAG, "Default PWD bytes: " + Arrays.toString(pwd));
 			
 		}else {
 			tpwd = pwd;
