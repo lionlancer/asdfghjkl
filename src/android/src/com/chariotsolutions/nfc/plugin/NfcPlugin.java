@@ -1376,7 +1376,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							nfca.transceive(new byte[] {
 									(byte)0xA2,
 									(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
-									(byte)0, 0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+									(byte)0x0, 0x0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 							});
 							
 							Log.d(TAG, "Setting PACK: OK");
@@ -1392,7 +1392,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							nfca.transceive(new byte[] {
 									(byte)0xA2,
 									(byte)0x85,	// page address: PWD (4bytes)
-									0, 0, 0, 0 // Write all 4 PWD bytes into Page 133
+									0x0, 0x0, 0x0, 0x0 // Write all 4 PWD bytes into Page 133
 							});
 						
 							Log.d(TAG, "Setting PWD: OK");
@@ -1601,13 +1601,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		byte[] tpwd;
 		
-		//if(passcode != ""){
-		//	byte[] bpwd = passcode.getBytes();
+		if(passcode != ""){
+			byte[] bpwd = passcode.getBytes();
 			
-		//	tpwd = bpwd;
-		//}else {
+			tpwd = bpwd;
+			
+			console.log("User PWD bytes: " + Arrays.toString(bpwd));
+			console.log("Default PWD bytes: " + Arrays.toString(pwd));
+			
+		}else {
 			tpwd = pwd;
-		//}
+		}
 		
 		boolean error = false;
 		String message = "";
