@@ -465,6 +465,7 @@ var nfc = {
 
 	format: function (passcode, win, fail) {
 		if(passcode == null) passcode = "";
+		alert("Passcode: " + passcode);
         cordova.exec(win, fail, "NfcPlugin", "formatTag", [passcode]);
     },
 	
