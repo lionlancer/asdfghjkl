@@ -1368,7 +1368,45 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							//e.printStackTrace();
 							callbackContext.error("Error formatting card: " + e.getMessage());
 						}
+						
+						
+						try{
+							// Send PACK and PWD
+							// set PACK:
+							nfca.transceive(new byte[] {
+									(byte)0xA2,
+									(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
+									(byte)0, 0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+							});
+							
+							Log.d(TAG, "Setting PACK: OK");
+							
+						}catch(Exception e){
+							Log.d(TAG, "Error in setting PACK: " + e.getMessage());
+							
+							callbackContext.error("Error in setting PACK: " + e.getMessage());
+						}	
+							
+						try{	
+							// set PWD:
+							nfca.transceive(new byte[] {
+									(byte)0xA2,
+									(byte)0x85,	// page address: PWD (4bytes)
+									0, 0, 0, 0 // Write all 4 PWD bytes into Page 133
+							});
+						
+							Log.d(TAG, "Setting PWD: OK");
+							
+						}catch(Exception e){
+							Log.d(TAG, "Error in setting PWD: " + e.getMessage());
+							
+							callbackContext.error("Error in Setting PWD: " + e.getMessage());
+						}
+						
+						
 					}
+					
+					
 					
 					// empty the contents
 					
@@ -1380,7 +1418,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						};
 						
 						
-						Log.d(TAG, "Command:");
+						Log.d(TAG, "Format Command:");
 						Log.d(TAG, Arrays.toString(command));
 						
 						try {
@@ -1495,8 +1533,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			nfca.transceive(new byte[] {
 					(byte)0xA2,
 					(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
-					0, 0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+					(byte)0, 0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
 			});
+			
+			Log.d(TAG, "Setting PACK: OK");
 			
 		}catch(Exception e){
 			Log.d(TAG, "Error in setting PACK: " + e.getMessage());
@@ -1512,8 +1552,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					0, 0, 0, 0 // Write all 4 PWD bytes into Page 133
 			});
 		
-			callbackContext.success();
-		
+			Log.d(TAG, "Setting PWD: OK");
+			
 		}catch(Exception e){
 			Log.d(TAG, "Error in setting PWD: " + e.getMessage());
 			
