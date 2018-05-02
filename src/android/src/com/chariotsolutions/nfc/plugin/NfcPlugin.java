@@ -703,10 +703,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
 						//Log.d(TAG, response);
 						
-					} catch (IOException e) {
+					} catch (Exception e) {
 						Log.d(TAG, "Error:" + e.getMessage());
 						//e.printStackTrace();
 						callbackContext.error("Error writing to card: " + e.getMessage());
+						
+						break;
 					}
 				}
 				
@@ -714,10 +716,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				try {
 					nfca.close();
 					Log.d(TAG, "NFCA Closed");
-				} catch (IOException e) {
-					Log.d(TAG, "IOException Error: " + e.getMessage());
+				} catch (Exception e) {
+					Log.d(TAG, "Exception Error: " + e.getMessage());
 					e.printStackTrace();
-					callbackContext.error("IOException Error: " + e.getMessage());
+					callbackContext.error("Error: " + e.getMessage());
 				}
 				
 				
@@ -882,10 +884,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
 						//Log.d(TAG, response);
 						
-					} catch (IOException e) {
+					} catch (Exception e) {
 						Log.d(TAG, "Error:" + e.getMessage());
 						//e.printStackTrace();
 						callbackContext.error("Error writing to card: " + e.getMessage());
+						
+						break;
 					}
 				}
 				
@@ -1087,10 +1091,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								Log.d(TAG, "Response got in "+i+"!: " + Arrays.toString(response));
 								//Log.d(TAG, response);
 								
-							} catch (IOException e) {
+							} catch (Exception e) {
 								Log.d(TAG, "Error:" + e.getMessage());
 								//e.printStackTrace();
 								callbackContext.error("Error writing to card: " + e.getMessage());
+								
+								break;
 							}
 						}
 					
