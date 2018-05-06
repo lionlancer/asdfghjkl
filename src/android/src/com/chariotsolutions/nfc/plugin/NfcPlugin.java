@@ -980,46 +980,54 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				Log.d(TAG, "Save Type: " + gSaveType);
 				
-				if(gSaveType.equalsIgnoreCase("Read-Only")){
-					Log.d(TAG, "DisbledProtection");
-					protect = false;
+				if(gSaveType.equalsIgnoreCase("")){
+					// Do nothing
+					Log.d(TAG, "Protection not set.");
+				
 				}else{
-					Log.d(TAG, "EnabledProtection");
-					protect = true;
+				
+					if(gSaveType.equalsIgnoreCase("Read-Only")){
+						Log.d(TAG, "DisbledProtection");
+						protect = false;
+					}else{
+						Log.d(TAG, "EnabledProtection");
+						protect = true;
+					}
+						
+					// define access
+					nfca = enableProtection(nfca, protect, callbackContext);
+					
+					
+					try{
+						// Send PACK and PWD
+						// set PACK:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x86,
+								pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+						});
+						// set PWD:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x85,
+								pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
+						});
+						
+						nfca.transceive(new byte[] {
+								(byte)0xA2, // WRITE
+								(byte)3,    // block address
+								//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
+								(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
+						});
+					}catch(Exception e){
+						Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
+						
+						callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
+					}
+					
+					Log.d(TAG, "Set PWD and PACK");
 				}
-					
-				// define access
-				nfca = enableProtection(nfca, protect, callbackContext);
 				
-				
-				try{
-					// Send PACK and PWD
-					// set PACK:
-					nfca.transceive(new byte[] {
-							(byte)0xA2,
-							(byte)0x86,
-							pack[0], pack[1], 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
-					});
-					// set PWD:
-					nfca.transceive(new byte[] {
-							(byte)0xA2,
-							(byte)0x85,
-							pwd[0], pwd[1], pwd[2], pwd[3] // Write all 4 PWD bytes into Page 43
-					});
-					
-					nfca.transceive(new byte[] {
-							(byte)0xA2, // WRITE
-							(byte)3,    // block address
-							//(byte)0xE1, (byte)0x10, (byte)0x12, (byte)0x00 NTAG213
-							(byte)0xE1, (byte)0x10, (byte)0x3E, (byte)0x00 // NTAG215
-					});
-				}catch(Exception e){
-					Log.d(TAG, "Error in Send PACK and PWD: " + e.getMessage());
-					
-					callbackContext.error("Error in Setting PWD and PACK : " + e.getMessage());
-				}
-				
-				Log.d(TAG, "Set PWD and PACK");
 				
 				nfca.setTimeout(900);
 				
