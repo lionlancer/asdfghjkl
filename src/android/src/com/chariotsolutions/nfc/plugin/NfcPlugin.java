@@ -1651,10 +1651,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				boolean isProtected = false;
 				boolean proceed = false;
 				
-				NfcA nfca = NfcA.get(tag);
+				//nfca = NfcA.get(tag);
 				
-				try{ nfca.connect();}
-				catch(Exception e){}
+				//try{ nfca.connect();}
+				//catch(Exception e){}
 				
 				try{
 					
