@@ -1713,7 +1713,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
 					//callbackContext.error("Unlocking Error: " + e.getMessage());
-					System.exit(1);
+					//System.exit(1);
 				}
 				
 				if(isProtected && proceed){
@@ -1739,7 +1739,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//e.printStackTrace();
 						isUnlocked = false;
 						callbackContext.error("Error unlocking card: " + e.getMessage());
-						System.exit(1);
+						//System.exit(1);
 					}
 					
 					
