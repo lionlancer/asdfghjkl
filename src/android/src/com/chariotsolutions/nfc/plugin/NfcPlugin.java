@@ -99,7 +99,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	private String gSaveType = "Read-Only";
 	private NfcA gNfcA;
 	private Tag gTag;
-	private isUnlocked = false;
+	private boolean isUnlocked = false;
 	
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
