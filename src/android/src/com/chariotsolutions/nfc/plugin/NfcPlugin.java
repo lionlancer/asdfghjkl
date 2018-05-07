@@ -1781,7 +1781,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					callbackContext.success();
 			
-				}else if(isProtected){
+				}else if(!isProtected){
 					
 					callbackContext.error("not_protected");
 				}
