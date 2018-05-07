@@ -51,6 +51,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String WRITE_TO_PAGE2 = "writeToPage2";
     private static final String FORMAT_TAG = "formatTag";
     private static final String UNLOCK = "unlock";
+	private static final String LOCK = "lock";
 	private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
     private static final String SHARE_TAG = "shareTag";
@@ -217,6 +218,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			unlockDTag(passcodes, callbackContext);	
 		
+		} else if (action.equalsIgnoreCase(LOCK)) {
+            
+			String passcode = data.getString(0);
+			
+			lockDTag(passcode, callbackContext);	
+				
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
 
@@ -407,6 +414,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         unlockTag(tag, passcodes, callbackContext);
+    }
+	
+	private void lockDTag(String passcode, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        lockTag(tag, passcode, callbackContext);
     }
 	
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
@@ -1793,6 +1809,100 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 	}
 	
+	private void lockTag(final Tag tag, final String passcode, final CallbackContext callbackContext){
+		cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+				
+				//if(passcode == null) passcode = "";
+				
+				byte[] response;
+				boolean readProtected = false;
+				boolean proceed = false;
+				
+				NfcA nfca = NfcA.get(tag);
+				
+				try{ nfca.connect();}
+				catch(Exception e){}
+				
+				try{
+					
+					response = null;
+					
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
+						});
+					}catch(Exception e){
+						readProtected = true;
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+					}
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
+						
+						Log.d(TAG, "tag is protected!");
+						
+						isProtected = true;
+						gNfcA = nfca;
+						gTag = tag;
+						
+						nfca = authenticate(nfca, passcode, callbackContext);
+						
+						if(isUnlocked) proceed = true;
+						
+					}else {
+						Log.d(TAG, "tag is NOT protected!");
+						//isAuthOK = true;
+						isProtected = false;
+						proceed = true;
+					}
+					
+				}catch(Exception e){
+					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
+				}
+				
+				if(proceed){
+					// change lock
+					
+					try{	
+						
+						byte[] newpwd = passcode.getBytes();
+					
+						// set PWD:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x85,	// page address: PWD (4bytes)
+								newpwd[0], newpwd[1], newpwd[2], newpwd[3] // Write all 4 PWD bytes into Page 133
+						});
+					
+						Log.d(TAG, "Setting PWD: OK");
+						
+					}catch(Exception e){
+						Log.d(TAG, "Error in setting PWD: " + e.getMessage());
+						
+						callbackContext.error("Error in Setting PWD: " + e.getMessage());
+					}
+					
+					
+				}else{
+					callbackContext.error("Failed to authenticate tag.");
+					Log.d(TAG, "Failed to authenticate tag.");
+				}
+					
+					
+				callbackContext.success();
+				
+			}
+		});
+	}
+	
 	private NfcA authenticate(NfcA nfca, String passcode, CallbackContext callbackContext){
 		
 		byte[] tpwd;
@@ -2641,6 +2751,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		return escapedStr;		
 	}
 	
+	/*
 	private void lockTag(){
 		byte[] response;
 		
@@ -2709,6 +2820,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//e.printStackTrace();
 		}
 	}
+	*/
 	
     JSONObject buildNdefJSON(Ndef ndef, Parcelable[] messages) {
 
