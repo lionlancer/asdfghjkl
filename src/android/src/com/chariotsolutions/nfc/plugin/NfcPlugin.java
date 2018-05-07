@@ -417,7 +417,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         unlockTag(tag, passcodes, callbackContext);
     }
 	
-	private void changeLockDTag(String passcode, String passcode, CallbackContext callbackContext) throws JSONException {
+	private void changeLockDTag(String passcode, String newpasscode, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {  // TODO remove this and handle LostTag
             callbackContext.error("Failed to write tag, received null intent");
         }
