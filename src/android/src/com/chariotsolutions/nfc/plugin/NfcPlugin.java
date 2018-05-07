@@ -1641,6 +1641,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						nfca.close();
 						nfca.connect();
 					}catch(Exception f){				
+						//nfca.connect();
 						Log.d(TAG, "Error in connecting: " + f.getMessage());
 						
 						callbackContext.error("Error in connecting : " + f.getMessage());
@@ -1685,6 +1686,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						String[] codes = passcodes.split(","); 
 						
+						Log.d(TAG, "codes: " + Arrays.toString(codes));
+						
 						for(int i = 0; i < codes.length; i++){
 							String code = codes[i].trim();
 							
@@ -1710,6 +1713,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}catch(Exception e){
 					Log.d(TAG, "Unlocking error: " + e.getMessage());
 					//callbackContext.error("Unlocking Error: " + e.getMessage());
+					System.exit(1);
 				}
 				
 				if(isProtected && proceed){
@@ -1734,7 +1738,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "Error:" + e.getMessage());
 						//e.printStackTrace();
 						isUnlocked = false;
-						callbackContext.error("Error formatting card: " + e.getMessage());
+						callbackContext.error("Error unlocking card: " + e.getMessage());
+						System.exit(1);
 					}
 					
 					
@@ -1840,6 +1845,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			error = true;
 			message = "Authentication Error: " + e.getMessage();
+			
+			//System.exit(1);
 		}
 		
 		//JSONObject ret = new JSONObject();
