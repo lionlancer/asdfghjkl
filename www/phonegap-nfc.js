@@ -477,6 +477,10 @@ var nfc = {
 		cordova.exec(win, fail, "NfcPlugin", "unlock", [passcodes]);
 	},
 	
+	changeLock: function(passcode, newpasscode, win, fail){
+		cordova.exec(win, fail, "NfcPlugin", "changeLock", [passcode, newpasscode]);
+	},
+	
     makeReadOnly: function (win, fail) {
         cordova.exec(win, fail, "NfcPlugin", "makeReadOnly", []);
     },

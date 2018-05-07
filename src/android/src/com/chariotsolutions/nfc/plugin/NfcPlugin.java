@@ -51,7 +51,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String WRITE_TO_PAGE2 = "writeToPage2";
     private static final String FORMAT_TAG = "formatTag";
     private static final String UNLOCK = "unlock";
-	private static final String LOCK = "lock";
+	private static final String CHANGE_LOCK = "changeLock";
 	private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
     private static final String SHARE_TAG = "shareTag";
@@ -218,11 +218,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 			unlockDTag(passcodes, callbackContext);	
 		
-		} else if (action.equalsIgnoreCase(LOCK)) {
+		} else if (action.equalsIgnoreCase(CHANGE_LOCK)) {
             
 			String passcode = data.getString(0);
+			String newpasscode = data.getString(1);
 			
-			lockDTag(passcode, callbackContext);	
+			changeLockDTag(passcode, newpasscode, callbackContext);	
 				
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
@@ -416,13 +417,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         unlockTag(tag, passcodes, callbackContext);
     }
 	
-	private void lockDTag(String passcode, CallbackContext callbackContext) throws JSONException {
+	private void changeLockDTag(String passcode, String passcode, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {  // TODO remove this and handle LostTag
             callbackContext.error("Failed to write tag, received null intent");
         }
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        lockTag(tag, passcode, callbackContext);
+        changeLockTag(tag, passcode, newpasscode, callbackContext);
     }
 	
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
@@ -1809,7 +1810,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 	}
 	
-	private void lockTag(final Tag tag, final String passcode, final CallbackContext callbackContext){
+	private void changeLockTag(final Tag tag, final String passcode, final String newpasscode, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -1873,7 +1874,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					try{	
 						
-						byte[] newpwd = passcode.getBytes();
+						byte[] newpwd = newpasscode.getBytes();
 					
 						// set PWD:
 						nfca.transceive(new byte[] {
