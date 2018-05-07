@@ -1778,8 +1778,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						callbackContext.error("Error in Setting PWD: " + e.getMessage());
 					}
 					
-					isUnlocked = false;
+					
 					callbackContext.success();
+			
+				}else if(isProtected){
+					
+					callbackContext.error("not_protected");
 				}
 				
 				isUnlocked = false;
