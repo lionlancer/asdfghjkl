@@ -465,13 +465,17 @@ var nfc = {
 
 	format: function (passcode, win, fail) {
 		if(passcode == null) passcode = "";
-		alert("Passcode: " + passcode);
+		//alert("Passcode: " + passcode);
         cordova.exec(win, fail, "NfcPlugin", "formatTag", [passcode]);
     },
 	
 	applyPassword: function (win, fail) {
         cordova.exec(win, fail, "NfcPlugin", "applyPassword", []);
     },
+	
+	unlock: function(passcodes, win, fail){
+		cordova.exec(win, fail, "NfcPlugin", "unlock", [passcodes]);
+	},
 	
     makeReadOnly: function (win, fail) {
         cordova.exec(win, fail, "NfcPlugin", "makeReadOnly", []);
