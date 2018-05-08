@@ -1861,7 +1861,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						Log.d(TAG, "tag is NOT protected!");
 						//isAuthOK = true;
 						isProtected = false;
-						proceed = true;
+						//proceed = true;
 					}
 					
 				}catch(Exception e){
@@ -1893,8 +1893,13 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 					
 				}else{
-					callbackContext.error("Failed to authenticate tag.");
-					Log.d(TAG, "Failed to authenticate tag.");
+					
+					}if(!isProtected){
+						callbackContext.error("not_protected");
+					}else{
+						callbackContext.error("Failed to update passcode.");
+						Log.d(TAG, "Failed to authenticate tag.");
+					}
 				}
 					
 					
