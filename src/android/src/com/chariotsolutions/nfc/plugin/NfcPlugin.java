@@ -1910,7 +1910,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		try{
 			nfca.connect();
-		}catch(Exception ignored){}
+		}catch(Exception e){
+			try{
+				nfca.close();
+				nfca.connect();
+			}catch(Exception e){
+				Log.d(TAG, "Authentication (Connect) Error: " + e.getMessage());
+			}
+		}
 		
 		if(passcode != ""){
 			Log.d(TAG, "Passcode: " + passcode);
