@@ -221,7 +221,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		} else if (action.equalsIgnoreCase(UNLOCK2)) {
             
-			Arrays passcodes = data.getArrays(0);
+			Arrays passcodes = data.getJSONArray(0);
 			
 			unlockDTag2(passcodes, callbackContext);	
 		
@@ -1828,7 +1828,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 	}
 	
-	private void unlockTag2(final Tag tag, final Arrays passcodes, final CallbackContext callbackContext){
+	private void unlockTag2(final Tag tag, final JSONArray passcodes, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -1891,7 +1891,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//Log.d(TAG, "codes: " + Arrays.toString(codes));
 						
 						for(int i = 0; i < passcodes.length; i++){
-							String code = codes[i].trim();
+							String code = codes.getString(i);
+							code = code.trim();
 							
 							if(code.equals("")){
 								// do nothing
