@@ -1659,7 +1659,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//	nfca.connect();
 					//}catch(Exception f){				
 						//nfca.connect();
-						Log.d(TAG, "Error in connecting: " + f.getMessage());
+						Log.d(TAG, "Error in connecting: " + e.getMessage());
 						
 					//	callbackContext.error("Error in connecting : " + f.getMessage());
 					//}
@@ -1921,7 +1921,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//	nfca.close();
 			//	nfca.connect();
 			//}catch(Exception f){
-				Log.d(TAG, "Authentication (Connect) Error: " + f.getMessage());
+				Log.d(TAG, "Authentication (Connect) Error: " + e.getMessage());
 			//}
 		}
 		
