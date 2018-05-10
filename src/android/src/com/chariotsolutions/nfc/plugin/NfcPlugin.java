@@ -1901,7 +1901,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							if(code.equals("")){
 								// do nothing
 							}else{
-								Toast.makeText(ctx, "Unlocking by: " + code, Toast.LENGTH_LONG).show();
+								//Toast.makeText(ctx, "Unlocking by: " + code, Toast.LENGTH_LONG).show();
 								nfca = authenticate(nfca, code, callbackContext, false);
 								
 								if(isUnlocked){ 
