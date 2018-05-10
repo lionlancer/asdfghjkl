@@ -51,6 +51,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String WRITE_TO_PAGE2 = "writeToPage2";
     private static final String FORMAT_TAG = "formatTag";
     private static final String UNLOCK = "unlock";
+    private static final String UNLOCK2 = "unlock2";
 	private static final String CHANGE_LOCK = "changeLock";
 	private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
@@ -217,6 +218,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			String passcode = data.getString(0);
 			
 			unlockDTag(passcode, callbackContext);	
+		
+		} else if (action.equalsIgnoreCase(UNLOCK2)) {
+            
+			Array passcodes = data.getArray(0);
+			
+			unlockDTag2(passcodes, callbackContext);	
 		
 		} else if (action.equalsIgnoreCase(CHANGE_LOCK)) {
             
@@ -415,6 +422,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         unlockTag(tag, passcode, callbackContext);
+    }
+	
+	private void unlockDTag2(Array passcodes, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+		
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        unlockTag2(tag, passcodes, callbackContext);
     }
 	
 	private void changeLockDTag(String passcode, String newpasscode, CallbackContext callbackContext) throws JSONException {
@@ -1811,6 +1827,179 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			
 		});
 	}
+	
+	private void unlockTag2(final Tag tag, final Array passcodes, final CallbackContext callbackContext){
+		cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+				
+				byte[] response;
+				NfcA nfca = NfcA.get(tag);
+				
+				try{ nfca.connect();}
+				catch(Exception e){
+					
+					//try{ 
+					//	nfca.close();
+					//	nfca.connect();
+					//}catch(Exception f){				
+						//nfca.connect();
+						Log.d(TAG, "Error in connecting: " + e.getMessage());
+						
+					//	callbackContext.error("Error in connecting : " + f.getMessage());
+					//}
+				}
+				
+				boolean readProtected = false;
+				boolean isProtected = false;
+				boolean proceed = false;
+				
+				//nfca = NfcA.get(tag);
+				
+				//try{ nfca.connect();}
+				//catch(Exception e){}
+				
+				try{
+					
+					response = null;
+					
+					try{
+						// find out if tag is password protected
+						response = nfca.transceive(new byte[] {
+							(byte) 0x30, // READ
+							//(byte) 0x83  // page address
+							(byte) (131 & 0x0FF)  // page address
+						});
+					}catch(Exception e){
+						readProtected = true;
+						Log.d(TAG, "find out if tag is password protected Error: " + e.getMessage());
+					}
+					
+					// Authenticate with the tag first
+					// only if the Auth0 byte is not 0xFF,
+					// which is the default value meaning unprotected
+					if((response != null && (response[3] != (byte)0xFF)) || readProtected) {
+						
+						Log.d(TAG, "tag is protected!");
+						
+						isProtected = true;
+						gNfcA = nfca;
+						gTag = tag;
+						
+						//String[] codes = passcodes.split(","); 
+						
+						//Log.d(TAG, "codes: " + Arrays.toString(codes));
+						
+						for(int i = 0; i < passcodes.length; i++){
+							String code = codes[i].trim();
+							
+							if(code.equals("")){
+								// do nothing
+							}else{							
+								nfca = authenticate(nfca, code, callbackContext);
+								
+								if(isUnlocked){ 
+									proceed = true;
+									break;
+								}
+							}
+						}
+						
+						if(!isUnlocked){
+							//Log.d(TAG, "unlock failed!");
+							callbackContext.error("Failed to unlock card. All listed passcodes are incorrect.");
+						}						
+						
+					}else {
+						Log.d(TAG, "tag is NOT protected!");
+						//isAuthOK = true;
+						isProtected = false;
+					}
+					
+				}catch(Exception e){
+					Log.d(TAG, "Unlocking error: " + e.getMessage());
+					//callbackContext.error("Unlocking Error: " + e.getMessage());
+					//System.exit(1);
+				}
+				
+				if(isProtected && proceed){
+					// remove lock
+					
+					byte[] command = new byte[] {
+							(byte)0xA2, // WRITE
+							(byte)(131 & 0x0FF), // block address
+							0, 0, 0, (byte)0xFF		// remove protection?
+					};
+					
+					
+					Log.d(TAG, "Command:");
+					Log.d(TAG, Arrays.toString(command));
+					
+					try {
+						response = nfca.transceive(command);
+						Log.d(TAG, "Response got to unlock!: " + Arrays.toString(response));
+						//Log.d(TAG, response);
+						
+					} catch (Exception e) {
+						Log.d(TAG, "Error:" + e.getMessage());
+						//e.printStackTrace();
+						isUnlocked = false;
+						callbackContext.error("Error unlocking card: " + e.getMessage());
+						//System.exit(1);
+					}
+					
+					
+					try{
+						// Send PACK and PWD
+						// set PACK:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
+								(byte)0x0, 0x0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
+						});
+						
+						Log.d(TAG, "Setting PACK: OK");
+						
+					}catch(Exception e){
+						Log.d(TAG, "Error in setting PACK: " + e.getMessage());
+						
+						isUnlocked = false;
+						callbackContext.error("Error in setting PACK: " + e.getMessage());
+					}	
+						
+					try{	
+						// set PWD:
+						nfca.transceive(new byte[] {
+								(byte)0xA2,
+								(byte)0x85,	// page address: PWD (4bytes)
+								0x0, 0x0, 0x0, 0x0 // Write all 4 PWD bytes into Page 133
+						});
+					
+						Log.d(TAG, "Setting PWD: OK");
+						
+						nfca.close();
+						callbackContext.success();
+						
+					}catch(Exception e){
+						Log.d(TAG, "Error in setting PWD: " + e.getMessage());
+						
+						isUnlocked = false;
+						callbackContext.error("Error in Setting PWD: " + e.getMessage());
+					}
+					
+			
+				}else if(!isProtected){
+					
+					callbackContext.error("not_protected");
+				}
+				
+				isUnlocked = false;
+				
+			}
+			
+		});
+	}
+	
 	
 	private void changeLockTag(final Tag tag, final String passcode, final String newpasscode, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
