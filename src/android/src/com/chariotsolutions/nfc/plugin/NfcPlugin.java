@@ -1654,15 +1654,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				try{ nfca.connect();}
 				catch(Exception e){
 					
-					try{ 
-						nfca.close();
-						nfca.connect();
-					}catch(Exception f){				
+					//try{ 
+					//	nfca.close();
+					//	nfca.connect();
+					//}catch(Exception f){				
 						//nfca.connect();
 						Log.d(TAG, "Error in connecting: " + f.getMessage());
 						
-						callbackContext.error("Error in connecting : " + f.getMessage());
-					}
+					//	callbackContext.error("Error in connecting : " + f.getMessage());
+					//}
 				}
 				
 				boolean readProtected = false;
@@ -1788,6 +1788,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					
 						Log.d(TAG, "Setting PWD: OK");
 						
+						nfca.close();
+						callbackContext.success();
+						
 					}catch(Exception e){
 						Log.d(TAG, "Error in setting PWD: " + e.getMessage());
 						
@@ -1795,8 +1798,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						callbackContext.error("Error in Setting PWD: " + e.getMessage());
 					}
 					
-					
-					callbackContext.success();
 			
 				}else if(!isProtected){
 					
@@ -1916,12 +1917,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		try{
 			nfca.connect();
 		}catch(Exception e){
-			try{
-				nfca.close();
-				nfca.connect();
-			}catch(Exception f){
+			//try{
+			//	nfca.close();
+			//	nfca.connect();
+			//}catch(Exception f){
 				Log.d(TAG, "Authentication (Connect) Error: " + f.getMessage());
-			}
+			//}
 		}
 		
 		if(passcode != ""){
