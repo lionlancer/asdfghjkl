@@ -1833,6 +1833,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             @Override
             public void run() {
 				
+				Log.d(TAG, "passcodes: " + passcodes.toString());
+				
 				byte[] response;
 				NfcA nfca = NfcA.get(tag);
 				

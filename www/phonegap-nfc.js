@@ -478,7 +478,7 @@ var nfc = {
 	},
 	
 	unlock2: function(passcodes, win, fail){
-		cordova.exec(win, fail, "NfcPlugin", "unlock", [passcodes]);
+		cordova.exec(win, fail, "NfcPlugin", "unlock2", [passcodes]);
 	},
 	
 	changeLock: function(passcode, newpasscode, win, fail){
