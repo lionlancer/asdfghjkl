@@ -221,7 +221,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		} else if (action.equalsIgnoreCase(UNLOCK2)) {
             
-			Array passcodes = data.getArray(0);
+			Arrays passcodes = data.getArray(0);
 			
 			unlockDTag2(passcodes, callbackContext);	
 		
@@ -424,7 +424,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         unlockTag(tag, passcode, callbackContext);
     }
 	
-	private void unlockDTag2(Array passcodes, CallbackContext callbackContext) throws JSONException {
+	private void unlockDTag2(Arrays passcodes, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {  // TODO remove this and handle LostTag
             callbackContext.error("Failed to write tag, received null intent");
         }
@@ -1828,7 +1828,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		});
 	}
 	
-	private void unlockTag2(final Tag tag, final Array passcodes, final CallbackContext callbackContext){
+	private void unlockTag2(final Tag tag, final Arrays passcodes, final CallbackContext callbackContext){
 		cordova.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
