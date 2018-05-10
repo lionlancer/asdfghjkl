@@ -1891,7 +1891,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//Log.d(TAG, "codes: " + Arrays.toString(codes));
 						
 						for(int i = 0; i < passcodes.length(); i++){
-							String code = codes.getString(i);
+							String code = passcodes.getString(i);
 							code = code.trim();
 							
 							if(code.equals("")){
