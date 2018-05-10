@@ -2061,15 +2061,15 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		}
 		
 		if(passcode != ""){
-			//Log.d(TAG, "Passcode: " + passcode);
+			Log.d(TAG, "Passcode: " + passcode);
 			
 			byte[] bpwd = passcode.getBytes();
-			//Log.d(TAG, "Passcode bytes: " + pwd);
+			Log.d(TAG, "Passcode bytes: " + pwd);
 			
 			tpwd = bpwd;
 			
-			//Log.d(TAG, "User PWD bytes: " + Arrays.toString(bpwd));
-			//Log.d(TAG, "Default PWD bytes: " + Arrays.toString(pwd));
+			Log.d(TAG, "User PWD bytes: " + Arrays.toString(bpwd));
+			Log.d(TAG, "Default PWD bytes: " + Arrays.toString(pwd));
 			
 		}else {
 			tpwd = pwd;
@@ -2108,7 +2108,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Authentication Error: " + e.getMessage());
-			if(!sendCallback){
+			
+			if(sendCallback == false){
 				// do nothing
 			}else{ 
 				callbackContext.error("Authentication Error: " + e.getMessage());
