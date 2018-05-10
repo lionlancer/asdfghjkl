@@ -221,7 +221,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		} else if (action.equalsIgnoreCase(UNLOCK2)) {
             
-			Arrays passcodes = data.getArray(0);
+			Arrays passcodes = data.getArrays(0);
 			
 			unlockDTag2(passcodes, callbackContext);	
 		
