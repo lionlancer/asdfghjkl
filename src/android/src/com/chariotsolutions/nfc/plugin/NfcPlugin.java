@@ -1725,7 +1725,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//	String code = codes[i].trim();
 							
 							//nfca = authenticate(nfca, code, callbackContext);
-							nfca = authenticate(nfca, passcode, callbackContext, false);
+							nfca = authenticate(nfca, passcode, callbackContext, true);
 							
 							if(isUnlocked){ 
 								proceed = true;
@@ -1846,7 +1846,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					//	nfca.connect();
 					//}catch(Exception f){				
 						//nfca.connect();
-						Log.d(TAG, "Error in connecting: " + e.getMessage());
+						Log.d(TAG, "(Ignored) Error in connecting: " + e.getMessage());
 						
 					//	callbackContext.error("Error in connecting : " + f.getMessage());
 					//}
@@ -1888,15 +1888,14 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						gNfcA = nfca;
 						gTag = tag;
 						
-						//String[] codes = passcodes.split(","); 
-						
 						//Log.d(TAG, "passcodes: " + passcodes.toString());
-						
+						int count = 0;
 						for(int i = 0; i < passcodes.length(); i++){
 							String code = passcodes.getString(i);
 							
 							//Log.d(TAG, "code: " + code);
 							//code = code.trim();
+							count = i + 1;
 							
 							if(code.equals("")){
 								// do nothing
@@ -1906,6 +1905,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 								
 								if(isUnlocked){ 
 									proceed = true;
+									
+									callbackContext.success(count + "+++++" + code);
+									
 									break;
 								}
 							}
@@ -1913,7 +1915,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						
 						if(!isUnlocked){
 							//Log.d(TAG, "unlock failed!");
-							callbackContext.error("Failed to unlock card. All listed passcodes are incorrect.");
+							callbackContext.error("failed+++++" + count);
 						}						
 						
 					}else {
@@ -1931,69 +1933,6 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				if(isProtected && proceed){
 					// remove lock
 					
-					byte[] command = new byte[] {
-							(byte)0xA2, // WRITE
-							(byte)(131 & 0x0FF), // block address
-							0, 0, 0, (byte)0xFF		// remove protection?
-					};
-					
-					
-					Log.d(TAG, "Command:");
-					Log.d(TAG, Arrays.toString(command));
-					
-					try {
-						response = nfca.transceive(command);
-						Log.d(TAG, "Response got to unlock!: " + Arrays.toString(response));
-						//Log.d(TAG, response);
-						
-					} catch (Exception e) {
-						Log.d(TAG, "Error:" + e.getMessage());
-						//e.printStackTrace();
-						isUnlocked = false;
-						callbackContext.error("Error unlocking card: " + e.getMessage());
-						//System.exit(1);
-					}
-					
-					
-					try{
-						// Send PACK and PWD
-						// set PACK:
-						nfca.transceive(new byte[] {
-								(byte)0xA2,
-								(byte)0x86,	// page address: PACK (2bytes), RFUI, RFUI
-								(byte)0x0, 0x0, 0, 0  // Write PACK into first 2 Bytes and 0 in RFUI bytes
-						});
-						
-						Log.d(TAG, "Setting PACK: OK");
-						
-					}catch(Exception e){
-						Log.d(TAG, "Error in setting PACK: " + e.getMessage());
-						
-						isUnlocked = false;
-						callbackContext.error("Error in setting PACK: " + e.getMessage());
-					}	
-						
-					try{	
-						// set PWD:
-						nfca.transceive(new byte[] {
-								(byte)0xA2,
-								(byte)0x85,	// page address: PWD (4bytes)
-								0x0, 0x0, 0x0, 0x0 // Write all 4 PWD bytes into Page 133
-						});
-					
-						Log.d(TAG, "Setting PWD: OK");
-						
-						nfca.close();
-						callbackContext.success();
-						
-					}catch(Exception e){
-						Log.d(TAG, "Error in setting PWD: " + e.getMessage());
-						
-						isUnlocked = false;
-						callbackContext.error("Error in Setting PWD: " + e.getMessage());
-					}
-					
-			
 				}else if(!isProtected){
 					
 					callbackContext.error("not_protected");
@@ -2117,7 +2056,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			//	nfca.close();
 			//	nfca.connect();
 			//}catch(Exception f){
-				//Log.d(TAG, "Authentication (Connect) Error: " + e.getMessage());
+				Log.d(TAG, "(Ignored) Authentication (Connect) Error: " + e.getMessage());
 			//}
 		}
 		
@@ -2152,7 +2091,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				byte[] packResponse = Arrays.copyOf(response, 2);
 				if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
-					//Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+					Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+					
 					callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
 					//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
 					
@@ -2162,15 +2102,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}else{
 					isUnlocked = true;
 					
-					//Log.d(TAG, "Tag authenticated!");
+					Log.d(TAG, "Tag authenticated!");
 					//message = "Tag authenticated!";
 				}
 			}
 		}catch(Exception e){
-			//Log.d(TAG, "Authentication Error: " + e.getMessage());
+			Log.d(TAG, "Authentication Error: " + e.getMessage());
 			if(!sendCallback){
 				// do nothing
-			}else callbackContext.error("Authentication Error: " + e.getMessage());
+			}else{ 
+				callbackContext.error("Authentication Error: " + e.getMessage());
+			}
 			//e.printStackTrace();
 			
 			error = true;
