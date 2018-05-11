@@ -56,9 +56,11 @@ public class Promise {
         for (Promise promise : promises) {
             try {
                 result.add(promise.getPromiseList().getFuture().get());
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException e) {
                 result.add(e);
-            }
+            } catch (ExecutionException e) {
+                result.add(e);
+            } 
         }
         return resolve(result);
     }

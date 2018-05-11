@@ -2249,7 +2249,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 							Log.d(TAG, "Tag authenticated!");
 							//message = "Tag authenticated!";
 							
-							onFulfill.execute(nfca)
+							onFulfill.execute(nfca);
 							
 						}
 						
