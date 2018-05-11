@@ -30,10 +30,14 @@
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
         <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/Util.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
-
+		
+		<source-file src="src/android/src/cn/hackingwu"
+            target-dir="src/cn"/>
+			
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.NFC"/>
             <uses-feature android:name="android.hardware.nfc" android:required="false"/>
+			<uses-permission android:name="android.permission.WAKE_LOCK" />
         </config-file>
 
     </platform>

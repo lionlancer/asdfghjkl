@@ -37,6 +37,7 @@ import android.nfc.tech.NdefFormatable;
 import android.os.Parcelable;
 import android.util.Log;
 
+import android.os.PowerManager;
 
 public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCompleteCallback {
     private static final String REGISTER_MIME_TYPE = "registerMimeType";
@@ -1740,10 +1741,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 						//for(int i = 0; i < codes.length; i++){
 						//	String code = codes[i].trim();
 							
-							nfca.setTimeout(900);
+							//nfca.setTimeout(900);
 							
 							//nfca = authenticate(nfca, code, callbackContext);
 							nfca = authenticate(nfca, passcode, callbackContext, true);
+							
+							//Promise prom = authenticate2(nfca, passcode, callbackContext, true).then(new OnFulfill() {
+							//	public Object execute(Object args) {
+							//		System.out.println("last result : " + args);
+							//		return null;
+							//	}
+							//});
 							
 							if(isUnlocked){ 
 								proceed = true;
@@ -2169,6 +2177,128 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		//return ret;
 		
 	}
+	
+	
+	
+	private Promise authenticate2(NfcA nfca, String passcode, CallbackContext callbackContext, boolean sendCallback){
+	
+		return new Promise(new Resolver() {
+            public void execute(OnFulfill<Object, Object> onFulfill, OnReject<Object, Object> onReject) throws Exception {
+                //int index = new Random().nextInt(2);
+                //if (index == 0) onFulfill.execute(index);
+                //else onReject.execute(index);
+				
+				byte[] tpwd;
+		
+				try{
+					nfca.connect();
+				}catch(Exception e){
+					//try{
+					//	nfca.close();
+					//	nfca.connect();
+					//}catch(Exception f){
+						Log.d(TAG, "(Ignored) Authentication (Connect) Error: " + e.getMessage());
+					//}
+				}
+				
+				
+				if(passcode != ""){
+					Log.d(TAG, "Passcode: " + passcode);
+					
+					byte[] bpwd = passcode.getBytes();
+					Log.d(TAG, "Passcode bytes: " + pwd);
+					
+					tpwd = bpwd;
+					
+					Log.d(TAG, "User PWD bytes: " + Arrays.toString(bpwd));
+					Log.d(TAG, "Default PWD bytes: " + Arrays.toString(pwd));
+					
+				}else {
+					tpwd = pwd;
+				}
+				
+				boolean error = false;
+				String message = "";
+				
+				try {
+					byte[] response = nfca.transceive(new byte[]{
+							(byte) 0x1B, // PWD_AUTH
+							tpwd[0], tpwd[1], tpwd[2], tpwd[3]
+					});
+					
+					// Check if PACK is matching expected PACK
+					// This is a (not that) secure method to check if tag is genuine
+					if ((response != null) && (response.length >= 2)) {
+						//authError = false;
+						
+						byte[] packResponse = Arrays.copyOf(response, 2);
+						if (!(pack[0] == packResponse[0] && pack[1] == packResponse[1])) {
+							Log.d(TAG, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString());
+							
+							callbackContext.error("Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString());
+							//Toast.makeText(ctx, "Tag could not be authenticated:\n" + packResponse.toString() + "≠" + pack.toString(), Toast.LENGTH_LONG).show();
+							
+							error = true;
+							message = "Tag could not be authenticated: " + packResponse.toString() + "≠" + pack.toString();
+							
+							onReject.execute(nfca);
+							
+						}else{
+							isUnlocked = true;
+							
+							Log.d(TAG, "Tag authenticated!");
+							//message = "Tag authenticated!";
+							
+							onFulfill.execute(nfca)
+							
+						}
+						
+						//return nfca;
+					}
+				}catch(Exception e){
+					Log.d(TAG, "Authentication Error: " + e.getMessage());
+					
+					if(sendCallback == false){
+						// do nothing
+					}else{ 
+						callbackContext.error("Authentication Error: " + e.getMessage());
+					}
+					//e.printStackTrace();
+					
+					error = true;
+					message = "Authentication Error: " + e.getMessage();
+					
+					onReject.execute(nfca);
+					
+					//System.exit(1);
+					//return nfca;
+				}
+				
+            }
+        });
+		
+		
+		
+		
+		/*
+		.then(new OnFulfill<String, Integer>() {
+            public String execute(Integer i) {
+                return "success result : " + i;
+            }
+        }, new OnReject() {
+            public Object execute(Object args) {
+                return "error result : " + args;
+            }
+        }).then(new OnFulfill<Object, String>() {
+            public Object execute(String args) {
+                System.out.println(args);
+                return null;
+            }
+        })
+		*/
+		
+	}
+	
 	
 	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
 		
@@ -3131,5 +3261,28 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             shareTagCallback.sendPluginResult(result);
         }
 
+    }
+}
+
+public class MyActivity extends Activity {
+	private static final String TAG = "NfcPlugin";
+    protected PowerManager.WakeLock mWakeLock;
+
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(final Bundle icicle) {
+        setContentView(R.layout.main);
+
+        /* This code together with the one in onDestroy() 
+         * will make the screen be always on until this Activity gets destroyed. */
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+        this.mWakeLock.acquire();
+    }
+
+    @Override
+    public void onDestroy() {
+        this.mWakeLock.release();
+        super.onDestroy();
     }
 }
