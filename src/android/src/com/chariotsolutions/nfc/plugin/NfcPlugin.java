@@ -2179,7 +2179,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	}
 	
 	
-	
+	/*
 	private Promise authenticate2(NfcA nfca, String passcode, CallbackContext callbackContext, boolean sendCallback){
 	
 		return new Promise(new Resolver() {
@@ -2295,10 +2295,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 return null;
             }
         })
-		*/
+		*
 		
 	}
-	
+	*/
 	
 	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
 		
@@ -3263,18 +3263,17 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
     }
 }
-
+/*
 public class MyActivity extends Activity {
 	private static final String TAG = "NfcPlugin";
-    protected PowerManager.WakeLock mWakeLock;
-
-    /** Called when the activity is first created. */
+    
+    /** Called when the activity is first created. *
     @Override
     public void onCreate(final Bundle icicle) {
         setContentView(R.layout.main);
 
         /* This code together with the one in onDestroy() 
-         * will make the screen be always on until this Activity gets destroyed. */
+         * will make the screen be always on until this Activity gets destroyed. *
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
         this.mWakeLock.acquire();
@@ -3286,3 +3285,4 @@ public class MyActivity extends Activity {
         super.onDestroy();
     }
 }
+*/
