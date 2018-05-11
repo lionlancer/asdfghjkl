@@ -83,7 +83,9 @@ public class Promise {
                     try {
                         Object object = future.get();
                         return resolve(object);
-                    } catch (InterruptedException | ExecutionException e) {
+                    } catch (InterruptedException e) {
+                        return reject(e);
+                    } catch (ExecutionException e) {
                         return reject(e);
                     }
                 } else if (future.isCancelled()) {
