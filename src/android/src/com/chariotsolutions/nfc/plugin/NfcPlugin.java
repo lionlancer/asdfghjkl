@@ -2140,6 +2140,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					Log.d(TAG, "Tag authenticated!");
 					//message = "Tag authenticated!";
 				}
+				
+				return nfca;
 			}
 		}catch(Exception e){
 			Log.d(TAG, "Authentication Error: " + e.getMessage());
@@ -2155,6 +2157,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			message = "Authentication Error: " + e.getMessage();
 			
 			//System.exit(1);
+			return nfca;
 		}
 		
 		
@@ -2164,7 +2167,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		//ret.put("nfca", nfca);
 		
 		//return ret;
-		return nfca;
+		
 	}
 	
 	private NfcA enableProtection(NfcA nfca, boolean protect, CallbackContext callbackContext){
