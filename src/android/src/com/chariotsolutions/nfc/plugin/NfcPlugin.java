@@ -1172,7 +1172,12 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				
-				nfca.close();
+				
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}
+				
 				
 				callbackContext.success();
 				
@@ -1332,7 +1337,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.error("Error in Setting PWD: " + e.getMessage());
 				}
 				
-				nfca.close();
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}
 			}
 			
 		});
@@ -1504,7 +1512,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 					callbackContext.success();
 				//}
 				
-				nfca.close();
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}
 			}
 		});
 	}
@@ -1827,7 +1838,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				
 				isUnlocked = false;
 				
-				nfca.close();
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}
 			}
 			
 		});
@@ -1945,7 +1959,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 				
 				isUnlocked = false;
-				nfca.close();
+				
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}
 				
 			}
 			
@@ -2048,7 +2066,11 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				}
 					
 				
-				nfca.close();	
+				try{ nfca.close(); }
+				catch(Exception e){
+					Log.d(TAG, "Error closing tag: " + e.getMessage());
+				}	
+				
 				callbackContext.success();
 				
 			}
@@ -2861,10 +2883,10 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 				str = cleanData(rData);
 				Log.d(TAG, "Cleaned Data: " + str);
 				
-				nfca.close();
+				//nfca.close();
 				
 			}catch(Exception e){
-				nfca.close();
+				//nfca.close();
 				
 				Log.d(TAG, "FAST_READ3 Exception Error: " + e.getMessage());
 				
@@ -2874,13 +2896,18 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 			}
 			
 		}catch(Exception e){
-			nfca.close();
+			//nfca.close();
 			
 			Log.d(TAG, "FAST_READ Exception Error: " + e.getMessage());
 			
 			if(callbackContext != null){
 				callbackContext.error("Error reading card: " + e.getMessage());
 			}
+		}
+	
+		try{ nfca.close(); }
+		catch(Exception e){
+			Log.d(TAG, "Error closing tag: " + e.getMessage());
 		}
 	
         //String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag), escapeStr(str));
