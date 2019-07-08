@@ -258,7 +258,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
+        NdefRecord[] records = Util215.jsonToNdefRecords(data.getString(0));
         writeNdefMessage(saveType, new NdefMessage(records), tag, callbackContext);
         //writeMessage(data, tag, callbackContext);
     }
@@ -973,7 +973,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     }
 
     private void shareTag(JSONArray data, CallbackContext callbackContext) throws JSONException {
-        NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
+        NdefRecord[] records = Util215.jsonToNdefRecords(data.getString(0));
         this.p2pMessage = new NdefMessage(records);
 
         startNdefPush(callbackContext);
@@ -1736,7 +1736,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		lockTag(nfca, tag);
 	
-        String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util.tagToJSON(tag));
+        String command = MessageFormat.format(javaScriptEventTemplate, NDEF_FORMATABLE, Util215.tagToJSON(tag));
         Log.d(TAG, "Command: ");
 		Log.v(TAG, command);
         this.webView.sendJavascript(command);
@@ -1748,7 +1748,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 		
 		lockTag(nfca, tag);
 	
-        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util.tagToJSON(tag));
+        String command = MessageFormat.format(javaScriptEventTemplate, TAG_DEFAULT, Util215.tagToJSON(tag));
         Log.d(TAG, "Command: ");
 		Log.v(TAG, command);
         this.webView.sendJavascript(command);
@@ -1825,7 +1825,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	
     JSONObject buildNdefJSON(Ndef ndef, Parcelable[] messages) {
 
-        JSONObject json = Util.ndefToJSON(ndef);
+        JSONObject json = Util215.ndefToJSON(ndef);
 
         // ndef is null for peer-to-peer
         // ndef and messages are null for ndef format-able
@@ -1835,7 +1835,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
                 if (messages.length > 0) {
                     NdefMessage message = (NdefMessage) messages[0];
-                    json.put("ndefMessage", Util.messageToJSON(message));
+                    json.put("ndefMessage", Util215.messageToJSON(message));
                     // guessing type, would prefer a more definitive way to determine type
                     json.put("type", "NDEF Push Protocol");
                 }
@@ -1846,7 +1846,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
             } catch (JSONException e) {
                 // shouldn't happen
-                Log.e(Util.TAG, "Failed to convert ndefMessage into json", e);
+                Log.e(Util215.TAG, "Failed to convert ndefMessage into json", e);
             }
         }
         return json;
@@ -1855,7 +1855,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 	/*
 	JSONObject buildNfcAJSON(NfcA nfca, Parcelable[] messages) {
 
-        JSONObject json = Util.nfcaToJSON(nfca, messages);
+        JSONObject json = Util215.nfcaToJSON(nfca, messages);
 
         // ndef is null for peer-to-peer
         // ndef and messages are null for ndef format-able
@@ -1865,7 +1865,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
                 if (messages.length > 0) {
                     NdefMessage message = (NdefMessage) messages[0];
-                    json.put("ndefMessage", Util.messageToJSON(message));
+                    json.put("ndefMessage", Util215.messageToJSON(message));
                     // guessing type, would prefer a more definitive way to determine type
                     json.put("type", "NDEF Push Protocol");
                 }
@@ -1876,7 +1876,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
             } catch (JSONException e) {
                 // shouldn't happen
-                Log.e(Util.TAG, "Failed to convert ndefMessage into json", e);
+                Log.e(Util215.TAG, "Failed to convert ndefMessage into json", e);
             }
         }
         return json;

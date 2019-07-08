@@ -28,7 +28,7 @@
 
         <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/NfcPlugin215.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
-        <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/Util.java"
+        <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/Util215.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
 		
 		<source-file src="src/android/src/cn/hackingwu"
