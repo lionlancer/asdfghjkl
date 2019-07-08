@@ -410,7 +410,7 @@ var ndef = {
 };
 
 // nfc provides javascript wrappers to the native phonegap implementation
-var nfc = {
+var nfc215 = {
 	setPassword: function (pwd, pack, win, fail){
 		//pwd = util.stringToBytes(pwd);
 		//pack = util.stringToBytes(pack);

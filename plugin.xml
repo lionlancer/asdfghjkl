@@ -2,7 +2,7 @@
 <plugin
     xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="phonegap-nfc"
+    id="phonegap-nfc-215"
     version="0.7.1">
 
     <name>NFC</name>
@@ -15,7 +15,7 @@
     <issue>https://github.com/lionlancer/asdfghjkl/issues</issue>
 
     <platform name="android">
-        <js-module src="www/phonegap-nfc.js" name="NFC">
+        <js-module src="www/phonegap-nfc-215.js" name="NFC">
             <runs />
         </js-module>
 
