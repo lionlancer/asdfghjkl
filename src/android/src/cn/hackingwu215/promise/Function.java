@@ -1,4 +1,4 @@
-package cn.hackingwu.promise;
+package cn.hackingwu215.promise;
 
 /**
  * 用Function接口,在外部调用使用匿名类的写法,实现类函数式编程.

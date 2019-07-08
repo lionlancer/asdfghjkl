@@ -31,7 +31,7 @@
         <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/Util215.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
 		
-		<source-file src="src/android/src/cn/hackingwu"
+		<source-file src="src/android/src/cn/hackingwu215"
             target-dir="src/cn"/>
 			
         <config-file target="AndroidManifest.xml" parent="/manifest">

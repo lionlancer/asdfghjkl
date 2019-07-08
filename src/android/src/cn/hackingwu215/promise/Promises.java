@@ -1,4 +1,4 @@
-package cn.hackingwu.promise;
+package cn.hackingwu215.promise;
 
 import java.util.Queue;
 import java.util.concurrent.Callable;
