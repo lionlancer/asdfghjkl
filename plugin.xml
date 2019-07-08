@@ -21,12 +21,12 @@
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="NfcPlugin">
-                <param name="android-package" value="com.chariotsolutions.nfc.plugin.NfcPlugin"/>
+                <param name="android-package" value="com.chariotsolutions.nfc.plugin.NfcPlugin215"/>
                 <param name="onload" value="true" />
             </feature>
         </config-file>
 
-        <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/NfcPlugin.java"
+        <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/NfcPlugin215.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
         <source-file src="src/android/src/com/chariotsolutions/nfc/plugin/Util.java"
             target-dir="src/com/chariotsolutions/nfc/plugin"/>
@@ -43,7 +43,7 @@
     </platform>
 
     <platform name="wp8">
-        <js-module src="www/phonegap-nfc.js" name="NFC">
+        <js-module src="www/phonegap-nfc-215.js" name="NFC">
             <runs />
         </js-module>
 
@@ -64,7 +64,7 @@
 
     <!-- windows -->
     <platform name="windows">
-        <js-module src="www/phonegap-nfc.js" name="NFC">
+        <js-module src="www/phonegap-nfc-215.js" name="NFC">
             <runs />
         </js-module>
 
@@ -84,13 +84,13 @@
             <DeviceCapability Name="proximity" />
         </config-file>
 
-        <js-module src="src/windows/nfc-plugin.js" name="NfcPlugin">
+        <js-module src="src/windows/nfc-plugin-215.js" name="NfcPlugin">
             <merges target="" />
         </js-module>
     </platform>
 
     <platform name="blackberry10">
-        <js-module src="www/phonegap-nfc.js" name="NFC">
+        <js-module src="www/phonegap-nfc-215.js" name="NFC">
             <runs />
         </js-module>
         <!-- override defaults for BB10 -->
@@ -108,7 +108,7 @@
     </platform>
 
     <platform name="ios">
-        <js-module src="www/phonegap-nfc.js" name="NFC">
+        <js-module src="www/phonegap-nfc-215.js" name="NFC">
             <runs />
         </js-module>
 
